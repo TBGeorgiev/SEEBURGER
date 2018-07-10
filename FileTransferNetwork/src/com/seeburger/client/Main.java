@@ -24,7 +24,7 @@ public class Main {
 			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 			DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 			
-			ListenerThread listenerRunnable = new ListenerThread(dataInputStream);
+			ListenerThread listenerRunnable = new ListenerThread(dataInputStream, socket);
 			Thread listenerThread = new Thread(listenerRunnable);
 			CommandsThread commandsRunnable = new CommandsThread(dataOutputStream);
 			Thread commandsThread = new Thread(commandsRunnable);

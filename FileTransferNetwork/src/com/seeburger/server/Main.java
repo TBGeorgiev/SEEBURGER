@@ -72,22 +72,33 @@ public class Main
 					logger.info("Client connected from: " + socket.getInetAddress() + "\n" + dateFormat.format(date));
 					DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 					DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-					
-					dataOutputStream.writeUTF(printMainMenu());
-					Finder finder;
-					int choice = Integer.parseInt(dataInputStream.readUTF());
-					
-					finder = initializeFinder(executorService, choice, dataOutputStream, dataInputStream);
-					try
-					{
-						finder.transferFiles();
-					} catch (IOException e)
-					{
-						System.exit(0);
-						e.printStackTrace();
-					} catch (InterruptedException e)
-					{
-						e.printStackTrace();
+					dataOutputStream.writeUTF(printWelcomeMenu());
+					int toUpload = Integer.parseInt(dataInputStream.readUTF());
+					switch (toUpload) {
+					case 1:
+						dataOutputStream.writeUTF(printMainMenu());
+						Finder finder;
+						int choice = Integer.parseInt(dataInputStream.readUTF());
+						
+						finder = initializeFinder(executorService, choice, dataOutputStream, dataInputStream);
+						try
+						{
+							finder.transferFiles();
+						} catch (IOException e)
+						{
+							System.exit(0);
+							e.printStackTrace();
+						} catch (InterruptedException e)
+						{
+							e.printStackTrace();
+						}
+						break;
+						
+					case 2:
+						dataOutputStream.writeUTF("sendFile");			
+						FileReceiverThread receiver = new FileReceiverThread(socket, dataInputStream);
+						executorService.execute(receiver);
+						break;					
 					}
 					
 				}
@@ -137,6 +148,10 @@ public class Main
 			break;
 		}
 		return null;
+	}
+	
+	private static String printWelcomeMenu() {
+		return("1:Move files on the server.\n2:Upload files to the server.");
 	}
 	
 	private static String printMainMenu() {

@@ -45,6 +45,10 @@ public class CommandsThread implements Runnable {
 		toExit = true;
 	}
 	
+	public static void setExitStatus(boolean setExit) {
+		toExit = setExit;
+	}
+	
 	public static boolean getExitStatus() {
 		return toExit;
 	}

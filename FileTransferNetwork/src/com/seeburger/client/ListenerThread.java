@@ -13,9 +13,11 @@ import java.net.Socket;
  */
 public class ListenerThread implements Runnable {
 	private DataInputStream dataInputStream;
+	Socket socket;
 
-	public ListenerThread(DataInputStream dataInputStream) {
+	public ListenerThread(DataInputStream dataInputStream, Socket socket) {
 		this.dataInputStream = dataInputStream;
+		this.socket = socket;
 	}
 
 	@Override
@@ -28,7 +30,14 @@ public class ListenerThread implements Runnable {
 				System.exit(0);
 				e.printStackTrace();
 			}
-			System.out.println(str);
+			if (str.equals("sendFile")) {
+				FileSenderThread sender = new FileSenderThread(socket);
+				Thread senderThread = new Thread(sender);
+				senderThread.start();
+				CommandsThread.setExitStatus(true);
+			} else {
+				System.out.println(str);				
+			}
 		}
 
 	}
