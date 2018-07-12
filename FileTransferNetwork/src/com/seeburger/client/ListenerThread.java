@@ -24,6 +24,7 @@ public class ListenerThread implements Runnable {
 	public void run() {
 		String str = "";
 		while (!CommandsThread.getExitStatus()) {
+			System.out.println("Inside Listener Thread");
 			try {
 				str = dataInputStream.readUTF();
 			} catch (IOException e) {
@@ -34,7 +35,6 @@ public class ListenerThread implements Runnable {
 				FileSenderThread sender = new FileSenderThread(socket);
 				Thread senderThread = new Thread(sender);
 				senderThread.start();
-				CommandsThread.setExitStatus(true);
 			} else {
 				System.out.println(str);				
 			}

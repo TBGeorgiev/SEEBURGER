@@ -27,6 +27,7 @@ public class CommandsThread implements Runnable {
 		String str = "";
 		while (!str.equals("end")) {
 			try {
+				System.out.println("Inside Commands thread");
 				str = reader.readLine();
 			} catch (IOException e) {
 				e.printStackTrace();

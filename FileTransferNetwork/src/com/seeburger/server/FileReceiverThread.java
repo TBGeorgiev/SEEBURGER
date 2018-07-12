@@ -27,7 +27,6 @@ public class FileReceiverThread implements Runnable
         OutputStream out = null;
 
         
-
         try {
             in = clientSocket.getInputStream();
         } catch (IOException ex) {
@@ -35,37 +34,43 @@ public class FileReceiverThread implements Runnable
         }
 
         try {
-        	String fileName = inputStream.readUTF();
-        	File folder = new File(fileName);
-        	File[] files = folder.listFiles();
-        	for (File file : files) {
-        		if (!file.isDirectory()) {
-        			System.out.println(file);
-        			out = new FileOutputStream(file.getName());
-        			byte[] bytes = new byte[16*1024];
-        			
-        			int count;
-        			try
-        			{
-        				while ((count = in.read(bytes)) > 0) {
-        					try
-        					{
-        						out.write(bytes, 0, count);
-        					} catch (IOException e)
-        					{
-        						// TODO Auto-generated catch block
-        						e.printStackTrace();
-        					}
+        	String fileName;
+        	
+        	while(!(fileName = inputStream.readUTF()).equals("EOF")) {
+        		out = new FileOutputStream(fileName);
+        		byte[] bytes = new byte[16*1024];
+        		
+        		int count;
+        		try
+        		{
+        			while ((count = in.read(bytes)) > 0) {
+        				try
+        				{
+        					out.write(bytes, 0, count);
+        				} catch (IOException e)
+        				{
+        					// TODO Auto-generated catch block
+        					e.printStackTrace();
         				}
-        			} catch (IOException e1)
-        			{
-        				// TODO Auto-generated catch block
-        				e1.printStackTrace();
         			}
-        			
+        			System.out.println(fileName);
+        		} catch (IOException e1)
+        		{
+        			// TODO Auto-generated catch block
+        			e1.printStackTrace();
         		}
+//        		File folder = new File(fileName);
+//        		File[] files = folder.listFiles();
+//        		for (File file : files) {
+//        			if (!file.isDirectory()) {
+//        				
+//        			}
+//        			
+//        		}
         		
         	}
+        	System.out.println("AFTER EOF");
+        	
         } catch (IOException ex) {
             System.out.println("File not found. ");
         }

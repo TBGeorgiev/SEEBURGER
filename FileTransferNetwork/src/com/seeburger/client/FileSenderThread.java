@@ -1,13 +1,12 @@
 package com.seeburger.client;
 
 import java.io.BufferedOutputStream;
+
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -16,7 +15,6 @@ public class FileSenderThread implements Runnable
 {
 	private Socket socket;
 	private DataOutputStream dout;
-	private DataInputStream din;
 	private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	
 	public FileSenderThread(Socket socket) {
@@ -34,22 +32,24 @@ public class FileSenderThread implements Runnable
 			File folder = new File(fileName);
 			File[] files = folder.listFiles();
 			FileInputStream in = null;
-			OutputStream out = null;
+//			OutputStream out = null;
 			for (File toSend : files) {
 				if (!toSend.isDirectory()) {
 					dout.writeUTF(toSend.getName());
 					byte[] bytes = new byte[16 * 1024];
 					in = new FileInputStream(toSend);
-					out = socket.getOutputStream();
+//					out = socket.getOutputStream();
 					
 					int count;
 					while ((count = in.read(bytes)) > 0) {
-						out.write(bytes, 0, count);
+//						out.write(bytes, 0, count);
+						dout.write(bytes, 0, count);
 					}
 				}
 			}
+			dout.writeUTF("EOF");
 
-	        out.close();
+//	        out.close();
 	        in.close();
 //	        socket.close();
 			
