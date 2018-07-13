@@ -33,6 +33,7 @@ public class FileSenderThread implements Runnable
 		FileInputStream fis = null;
 	    BufferedInputStream bis = null;
 	    OutputStream os = null;
+	    DataOutputStream dataOutputStream = null;
 //	    ServerSocket servsock = null;
 //	    Socket sock = null;
 	    try {
@@ -54,12 +55,13 @@ public class FileSenderThread implements Runnable
 	          fis = new FileInputStream(myFile);
 	          bis = new BufferedInputStream(fis);
 	          bis.read(mybytearray,0,mybytearray.length);
-	          os = socket.getOutputStream();
-	          os.write(fileName.getBytes());
+	          dataOutputStream = new DataOutputStream(socket.getOutputStream());
+	          dataOutputStream.write(fileName.getBytes());
 	          System.out.println("Sending " + FILE_TO_SEND + "(" + mybytearray.length + " bytes)");
-	          os.write(mybytearray,0,mybytearray.length);
-	          os.flush();
+	          dataOutputStream.write(mybytearray,0,mybytearray.length);
+	          dataOutputStream.flush();
 	          System.out.println("Done.");
+
 	        } catch (FileNotFoundException e)
 			{
 				// TODO Auto-generated catch block
@@ -80,10 +82,10 @@ public class FileSenderThread implements Runnable
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	          if (os != null)
+	          if (dataOutputStream != null)
 				try
 				{
-					os.close();
+					dataOutputStream.close();
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block

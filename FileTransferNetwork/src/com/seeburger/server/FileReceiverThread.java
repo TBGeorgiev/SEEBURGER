@@ -7,11 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class FileReceiverThread implements Runnable
 {
 	private Socket clientSocket;
-	DataInputStream inputStream;
+	private DataInputStream inputStream;
 	public final static int FILE_SIZE = 6022386;
 	public String FILE_TO_RECEIVED = "s:/test/newFile.jpg";
 
@@ -37,17 +38,18 @@ public class FileReceiverThread implements Runnable
 
 	      // receive file
 	      byte [] mybytearray  = new byte [FILE_SIZE];
-	      InputStream is = clientSocket.getInputStream();
+//	      InputStream is = clientSocket.getInputStream();
+	      DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
+
 	      File file = new File(FILE_TO_RECEIVED);
 
 	      fos = new FileOutputStream(file);
 	      bos = new BufferedOutputStream(fos);
-	      bytesRead = is.read(mybytearray,0,mybytearray.length);
+	      bytesRead = dataInputStream.read(mybytearray,0,mybytearray.length);
 	      current = bytesRead;
 	      int count;
 	      byte[] buffer = new byte[8192]; // or 4096, or more
-	      System.out.println("Before while");
-	      while ((count = is.read(buffer)) > 0)
+	      while ((count = dataInputStream.read(buffer)) > 0)
 	      {
 	        bos.write(buffer, 0, count);
 	      }
@@ -68,15 +70,15 @@ public class FileReceiverThread implements Runnable
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	      if (bos != null)
-			try
-			{
-				bos.close();
-			} catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//	      if (bos != null)
+//			try
+//			{
+//				bos.close();
+//			} catch (IOException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 //	      if (clientSocket != null)
 //			try
 //			{
