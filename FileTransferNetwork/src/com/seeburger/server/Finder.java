@@ -58,6 +58,7 @@ public class Finder {
 		String destination = dataInputStream.readUTF();
 		finalDestinationString = destination;
 		lookForFiles(directory, destination);
+		
 	}
 
 	// performs checks and starts a file moving thread if files are present
@@ -65,6 +66,9 @@ public class Finder {
 		boolean locationPartitionExists = false;
 		boolean destinationPartitionExists = false;
 		//checks if the given path's partition exists
+
+		//TODO - Replace with REGEX
+
 		File[] drives = File.listRoots();
 		for (int i = 0; i < drives.length; i++) {
 			if (drives[i].getAbsolutePath().charAt(0) == location.charAt(0)) {
@@ -94,7 +98,7 @@ public class Finder {
 				lookForFiles(location, destination);
 				return;
 			}
-			
+
 		}
 		File folder = new File(location);
 		// checks if location exists
@@ -140,7 +144,7 @@ public class Finder {
 				LinkedHashMap<String, String> fileByteStrings = getFileBytes(files);
 				ConsistencyChecker consistencyChecker = new ConsistencyChecker(finalDestinationString, runnableClass,
 						fileByteStrings, this.dout);
-				executorService.execute(consistencyChecker);	
+				executorService.execute(consistencyChecker);
 			}
 		}
 
@@ -216,5 +220,5 @@ public class Finder {
 		}
 		return fileBytesArrayList;
 	}
-	
+
 }
