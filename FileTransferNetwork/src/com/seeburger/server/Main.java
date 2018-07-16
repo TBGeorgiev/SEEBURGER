@@ -11,7 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Moves files from one location to another and logs the details of the moved
@@ -22,7 +25,7 @@ import java.util.logging.Logger;
  * correct amount. The tests can be enabled/disabled in the initialization of
  * the Finder class in the main method below. Each operation - file moving /
  * consistency check / location check - is done by a separate thread.
- * 
+ *
  * Instructions on how to use the program: 1: Insert the absolute path of a
  * directory you want to move files from. 2: Insert the absolute path of the
  * destination directory you want to move the files to. 3: If the source
@@ -37,16 +40,27 @@ public class Main
 	private static volatile int selector = 0;
 	private static int port = 21000;
 	private static Socket socket;
-	private static Logger logger = Logger.getLogger("FileLog");
+	public static Logger logger = Logger.getLogger("FileLog");
+	private static FileHandler fHandler;
 
 	public static void main(String[] args)
 	{
 		ExecutorService executorService = Executors.newFixedThreadPool(100);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
+		try
+		{
+			fHandler = new FileHandler("FileLog.log");
+			logger.addHandler(fHandler);
+			SimpleFormatter simpleFormatter = new SimpleFormatter();
+			fHandler.setFormatter(simpleFormatter);
+		} catch (SecurityException | IOException e2)
+		{
 
-		// first boolean is for file integrity tests (MD5 checksum test)
-		// second boolean is for location and destination tests
+			Main.getLogger().log(Level.WARNING, e2.getMessage(), e2);
+			e2.printStackTrace();
+		}
+
 		try
 		{
 			ServerSocket serverSocket = new ServerSocket(port);
@@ -62,7 +76,7 @@ public class Main
 					throw new IOException();
 				} catch (IOException e)
 				{
-					e.printStackTrace();
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				}
 			}
 
@@ -113,7 +127,8 @@ public class Main
 
 		} catch (IOException e1)
 		{
-			System.exit(0);
+//			System.exit(0);
+			Main.getLogger().log(Level.WARNING, e1.getMessage(), e1);
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -148,7 +163,8 @@ public class Main
 				// break;
 			} catch (IOException e)
 			{
-				System.exit(0);
+//				System.exit(0);
+				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			break;

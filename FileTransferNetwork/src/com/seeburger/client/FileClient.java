@@ -15,12 +15,10 @@ public class FileClient
 	public FileClient(Socket sock)
 	{
 		this.sock = sock;
-		// TODO Auto-generated constructor stub
 	}
 
 	public void sendFile() throws IOException
 	{
-
 		System.out.println("Do you want to enable File Consistency Checks (MD5 Checksum)?\nY / N:");
 
 		choice = scanner.nextLine();
@@ -46,7 +44,6 @@ public class FileClient
 
 			OutputStream os = sock.getOutputStream();
 
-			// Sending file name and file size to the server
 			DataOutputStream dos = new DataOutputStream(os);
 
 			dos.writeUTF(choice);
@@ -56,6 +53,7 @@ public class FileClient
 				// System.out.println("File hash before sending: " + fileHashString);
 				dos.writeUTF(fileHashString);
 			}
+			// Sending file name and file size to the server
 			dos.writeUTF(myFile.getName());
 			dos.writeLong(mybytearray.length);
 			dos.write(mybytearray, 0, mybytearray.length);
@@ -80,10 +78,7 @@ public class FileClient
 			{
 				continue;
 			}
-
 			// sock.close();
-
 		}
-
 	}
 }

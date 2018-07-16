@@ -24,7 +24,6 @@ public class Finder
 	private ExecutorService executorService;
 	private boolean emptyFolder;
 	private Logger logger;
-	private FileHandler fHandler;
 	private String finalDestinationString;
 	private boolean fileIntegrityTest;
 	private boolean locationAndDestinationTest;
@@ -41,19 +40,6 @@ public class Finder
 		this.dout = dout;
 		this.dataInputStream = dataInputStream;
 		this.logger = logger;
-		try
-		{
-			fHandler = new FileHandler("FileLog.log");
-			logger.addHandler(fHandler);
-			SimpleFormatter simpleFormatter = new SimpleFormatter();
-			fHandler.setFormatter(simpleFormatter);
-		} catch (SecurityException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	// starts the main transfer method
