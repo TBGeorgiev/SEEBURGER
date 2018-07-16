@@ -12,8 +12,8 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
- * File mover thread which contains
- * the file moving methods - Input/Output Stream based
+ * File mover thread which contains the file moving methods - Input/Output
+ * Stream based
  */
 
 public class RunnableClass implements Runnable
@@ -38,12 +38,12 @@ public class RunnableClass implements Runnable
 	{
 		RunnableClass.toStop = toStop;
 	}
-	
-	public static boolean getToStop() {
+
+	public static boolean getToStop()
+	{
 		return toStop;
 	}
 
-	
 	@Override
 	public void run()
 	{
@@ -64,7 +64,8 @@ public class RunnableClass implements Runnable
 				{
 					try
 					{
-						if (!file.canWrite()) {
+						if (!file.canWrite())
+						{
 							while (!file.canWrite())
 							{
 								Thread.currentThread();
@@ -93,13 +94,17 @@ public class RunnableClass implements Runnable
 			lock.notifyAll();
 			long end = System.currentTimeMillis();
 			movingFinished = true;
-			try {
+			try
+			{
 				dout.writeUTF("Moving complete. Operation took: " + (end - current) + " miliseconds. ");
-				if (Main.getSelector() == 0) {
-					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'"); 
+				if (Main.getSelector() == 0)
+				{
+					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				}
-//				dout.writeUTF("Enter 'y' if you want to continue or 'end' if you want to exit.");
-			} catch (IOException e) {
+				// dout.writeUTF("Enter 'y' if you want to continue or 'end' if you want to
+				// exit.");
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}
@@ -125,8 +130,9 @@ public class RunnableClass implements Runnable
 			{
 				oStream.write(buffer, 0, length);
 			}
-			logger.info("\tMoved file FROM: " + source.getAbsolutePath() + " TO: " + dest + File.separator + source.getName() + "\n\tFile size: " + source.length());
-			
+			logger.info("\tMoved file FROM: " + source.getAbsolutePath() + " TO: " + dest + File.separator
+					+ source.getName() + "\n\tFile size: " + source.length());
+
 		} finally
 		{
 			iStream.close();

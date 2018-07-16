@@ -1,4 +1,4 @@
-package com.seeburger.server;
+package com.seeburger.utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,16 +6,18 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 
 /**
- * Utility class which contains methods for MD5 checksum tests
- * so they can be used multiple times with ease.
+ * Utility class which contains methods for MD5 checksum tests so they can be
+ * used multiple times with ease.
+ * 
  * @author ts.georgiev
  *
  */
 public final class ChecksumUtilities
 {
-	
+
 	/**
 	 * Generates the checksum bytes
+	 * 
 	 * @author ts.georgiev
 	 *
 	 */
@@ -39,15 +41,15 @@ public final class ChecksumUtilities
 		fis.close();
 		return complete.digest();
 	}
-	
-	
-	
+
 	/**
 	 * Returns the complete checksum hash
+	 * 
 	 * @author ts.georgiev
 	 *
 	 */
-	public static String getMD5(File fileLocation) {
+	public static String getMD5(File fileLocation)
+	{
 		String result = "";
 		byte[] b1;
 		try

@@ -6,57 +6,68 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-
-
 /**
- * Thread used for sending messages to the server
- * until the 'end' command is given.
+ * Thread used for sending messages to the server until the 'end' command is
+ * given.
+ * 
  * @author ts.georgiev
  *
  */
-public class CommandsThread implements Runnable {
+public class CommandsThread implements Runnable
+{
 	private DataOutputStream dataOutputStream;
 	private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private static volatile boolean toExit;
 	private Socket socket;
 
-	public CommandsThread(DataOutputStream dataOutputStream, Socket socket) {
+	public CommandsThread(DataOutputStream dataOutputStream, Socket socket)
+	{
 		this.dataOutputStream = dataOutputStream;
 		this.socket = socket;
 	}
 
 	@Override
-	public void run() {
+	public void run()
+	{
 		String str = "";
-		while (!str.equals("end")) {
-			try {
+		while (!str.equals("end"))
+		{
+			try
+			{
 				str = reader.readLine();
-				if (str.equals("2")) {
+				if (str.equals("2"))
+				{
 					dataOutputStream.writeUTF("2");
 					FileSenderThread fileSenderThread = new FileSenderThread(socket);
 					Thread fileSender = new Thread(fileSenderThread);
 					fileSender.start();
 					break;
 				}
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
-			try {
+			try
+			{
 				dataOutputStream.writeUTF(str);
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
-			try {
+			try
+			{
 				dataOutputStream.flush();
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}
 		System.out.println("Exiting commands thread..");
 		toExit = true;
 	}
-	
-	public static boolean getExitStatus() {
+
+	public static boolean getExitStatus()
+	{
 		return toExit;
 	}
 

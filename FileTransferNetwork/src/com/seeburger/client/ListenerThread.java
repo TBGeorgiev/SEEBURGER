@@ -34,7 +34,5 @@ public class ListenerThread implements Runnable {
 			System.out.println(str);
 		}
 		System.out.println("Exiting listener thread..");
-
 	}
-
 }

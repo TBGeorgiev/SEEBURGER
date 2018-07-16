@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * Thread for checking the location/destination
- * and correct file amount.
+ * Thread for checking the location/destination and correct file amount.
  */
 
 public class DestinationChecker implements Runnable
@@ -19,7 +18,8 @@ public class DestinationChecker implements Runnable
 	private int numberOfFiles;
 	private DataOutputStream dout;
 
-	public DestinationChecker(RunnableClass runnableClass, String location, String destination, int numberOfFiles, DataOutputStream dout)
+	public DestinationChecker(RunnableClass runnableClass, String location, String destination, int numberOfFiles,
+			DataOutputStream dout)
 	{
 		this.runnableClass = runnableClass;
 		this.location = location;
@@ -66,7 +66,8 @@ public class DestinationChecker implements Runnable
 			{
 				try
 				{
-					Main.getLogger().info("\tLocation test: Bad" + " - Files still present in location: " + this.location);
+					Main.getLogger()
+							.info("\tLocation test: Bad" + " - Files still present in location: " + this.location);
 					this.dout.writeUTF("\tLocation test: Bad" + " - Files still present in location: " + this.location);
 				} catch (IOException e)
 				{
@@ -94,7 +95,8 @@ public class DestinationChecker implements Runnable
 					e.printStackTrace();
 				}
 			}
-			if (Main.getSelector() == 1) {
+			if (Main.getSelector() == 1)
+			{
 				try
 				{
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");

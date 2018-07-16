@@ -1,5 +1,7 @@
 package com.seeburger.server;
 
+import com.seeburger.utilities.*;
+
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Thread which performs the file consistency
- * checks (MD5 checksum) for the files before and after moving.
+ * Thread which performs the file consistency checks (MD5 checksum) for the
+ * files before and after moving.
  */
 
 public class ConsistencyChecker implements Runnable
@@ -51,7 +53,8 @@ public class ConsistencyChecker implements Runnable
 			{
 				e.printStackTrace();
 			}
-			if (Main.getSelector() >= 2) {
+			if (Main.getSelector() >= 2)
+			{
 				try
 				{
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
