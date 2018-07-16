@@ -5,11 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.logging.Level;
+
+import com.seeburger.server.Main;
 
 /**
  * Thread used for sending messages to the server until the 'end' command is
  * given.
- * 
+ *
  * @author ts.georgiev
  *
  */
@@ -45,24 +48,21 @@ public class CommandsThread implements Runnable
 				}
 			} catch (IOException e)
 			{
+				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			try
 			{
 				dataOutputStream.writeUTF(str);
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			try
-			{
 				dataOutputStream.flush();
 			} catch (IOException e)
 			{
+				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
+
 		}
-		System.out.println("Exiting commands thread..");
+//		System.out.println("Exiting commands thread..");
 		toExit = true;
 	}
 

@@ -3,6 +3,7 @@ package com.seeburger.server;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,6 +42,7 @@ public class DestinationChecker implements Runnable
 
 				} catch (InterruptedException e)
 				{
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -50,6 +52,7 @@ public class DestinationChecker implements Runnable
 				this.dout.writeUTF("Location and destination tests:");
 			} catch (IOException e)
 			{
+				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			if (isLocationEmpty(this.location))
@@ -60,6 +63,7 @@ public class DestinationChecker implements Runnable
 					this.dout.writeUTF("\tLocation test: Good" + " - No files present.");
 				} catch (IOException e)
 				{
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			} else
@@ -71,6 +75,7 @@ public class DestinationChecker implements Runnable
 					this.dout.writeUTF("\tLocation test: Bad" + " - Files still present in location: " + this.location);
 				} catch (IOException e)
 				{
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -82,6 +87,7 @@ public class DestinationChecker implements Runnable
 					this.dout.writeUTF("\tDestination test: Good" + " - Number of files matches.");
 				} catch (IOException e)
 				{
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			} else
@@ -92,6 +98,7 @@ public class DestinationChecker implements Runnable
 					this.dout.writeUTF("\tDestination test: Bad" + " - Number of files mismatch.");
 				} catch (IOException e)
 				{
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -102,7 +109,7 @@ public class DestinationChecker implements Runnable
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				} catch (IOException e)
 				{
-					// TODO Auto-generated catch block
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}

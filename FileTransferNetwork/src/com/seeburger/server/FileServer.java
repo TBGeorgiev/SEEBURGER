@@ -49,17 +49,22 @@ public class FileServer
 				output.write(buffer, 0, bytesRead);
 				size -= bytesRead;
 			}
-			System.out.println("File " + fileName + " uploaded successfully.");
+			System.out.println("File " + fileName + " uploaded successfully from: " + clientSocket);
+			Main.getLogger().info("File " + fileName + " uploaded successfully from: " + clientSocket);
+
 
 			if (choice.equalsIgnoreCase("y"))
 			{
+				Main.getLogger().info("File hash tests on file " + fileName);
 				DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
 				String newHashString = ChecksumUtilities.getMD5(new File(fileName));
 				if (newHashString.compareTo(hashStringBefore) == 0)
 				{
+					Main.getLogger().info("\tFile hash matches.");
 					dataOutputStream.writeUTF("\tFile hash matches.");
 				} else
 				{
+					Main.getLogger().info("\tFile hash mismatch!\n" + hashStringBefore + "\n" + newHashString);
 					dataOutputStream.writeUTF("\tFile hash mismatch!\n" + hashStringBefore + "\n" + newHashString);
 				}
 			}

@@ -49,15 +49,20 @@ public class FileClient
 			dos.writeUTF(choice);
 			if (choice.equalsIgnoreCase("y"))
 			{
+//				Main.getLogger().info("Generating hash for " + myFile.getName());
 				fileHashString = ChecksumUtilities.getMD5(myFile);
 				// System.out.println("File hash before sending: " + fileHashString);
 				dos.writeUTF(fileHashString);
+//				Main.getLogger().info("Hash generated: " + fileHashString);
 			}
+
+//			Main.getLogger().info("Uploading file " + myFile.getName());
 			// Sending file name and file size to the server
 			dos.writeUTF(myFile.getName());
 			dos.writeLong(mybytearray.length);
 			dos.write(mybytearray, 0, mybytearray.length);
 			dos.flush();
+//			Main.getLogger().info("File uploaded.");
 
 			if (choice.equalsIgnoreCase("y"))
 			{

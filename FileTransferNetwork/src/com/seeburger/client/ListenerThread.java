@@ -3,6 +3,9 @@ package com.seeburger.client;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+
+import com.seeburger.server.Main;
 
 
 
@@ -29,10 +32,11 @@ public class ListenerThread implements Runnable {
 				}
 			} catch (IOException e) {
 //				System.exit(0);
+				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			System.out.println(str);
 		}
-		System.out.println("Exiting listener thread..");
+//		System.out.println("Exiting listener thread..");
 	}
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Thread which performs the file consistency checks (MD5 checksum) for the
@@ -43,6 +44,7 @@ public class ConsistencyChecker implements Runnable
 					runnableClass.getLock().wait();
 				} catch (InterruptedException e)
 				{
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -51,6 +53,7 @@ public class ConsistencyChecker implements Runnable
 				checkFiles(destinationString, bytesList);
 			} catch (Exception e)
 			{
+				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			if (Main.getSelector() >= 2)
@@ -60,7 +63,7 @@ public class ConsistencyChecker implements Runnable
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				} catch (IOException e)
 				{
-					// TODO Auto-generated catch block
+					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}

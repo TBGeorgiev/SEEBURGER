@@ -50,14 +50,14 @@ public class Main
 		Date date = new Date();
 		try
 		{
-			fHandler = new FileHandler("FileLog.log");
+			fHandler = new FileHandler("ServerLog.log");
 			logger.addHandler(fHandler);
 			SimpleFormatter simpleFormatter = new SimpleFormatter();
 			fHandler.setFormatter(simpleFormatter);
 		} catch (SecurityException | IOException e2)
 		{
 
-			Main.getLogger().log(Level.WARNING, e2.getMessage(), e2);
+			logger.log(Level.WARNING, e2.getMessage(), e2);
 			e2.printStackTrace();
 		}
 
