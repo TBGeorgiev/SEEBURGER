@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Socket;
 
 
 
@@ -17,9 +18,11 @@ public class CommandsThread implements Runnable {
 	private DataOutputStream dataOutputStream;
 	private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private static volatile boolean toExit;
+	private Socket socket;
 
-	public CommandsThread(DataOutputStream dataOutputStream) {
+	public CommandsThread(DataOutputStream dataOutputStream, Socket socket) {
 		this.dataOutputStream = dataOutputStream;
+		this.socket = socket;
 	}
 
 	@Override
@@ -27,8 +30,14 @@ public class CommandsThread implements Runnable {
 		String str = "";
 		while (!str.equals("end")) {
 			try {
-				System.out.println("Inside Commands thread");
 				str = reader.readLine();
+				if (str.equals("2")) {
+					dataOutputStream.writeUTF("2");
+					FileSenderThread fileSenderThread = new FileSenderThread(socket);
+					Thread fileSender = new Thread(fileSenderThread);
+					fileSender.start();
+					break;
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -43,11 +52,8 @@ public class CommandsThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Exiting commands thread..");
 		toExit = true;
-	}
-	
-	public static void setExitStatus(boolean setExit) {
-		toExit = setExit;
 	}
 	
 	public static boolean getExitStatus() {

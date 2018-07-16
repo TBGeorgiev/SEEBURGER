@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
  *
  */
 public class Main {
-
+	
 
 	public static void main(String[] args) {
 		Socket socket;
@@ -23,17 +23,17 @@ public class Main {
 			socket = new Socket("localhost", 21000);
 			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 			DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-
-			ListenerThread listenerRunnable = new ListenerThread(dataInputStream, socket, dataOutputStream);
+			
+			ListenerThread listenerRunnable = new ListenerThread(dataInputStream);
 			Thread listenerThread = new Thread(listenerRunnable);
-//			CommandsThread commandsRunnable = new CommandsThread(dataOutputStream);
-//			Thread commandsThread = new Thread(commandsRunnable);
+			CommandsThread commandsRunnable = new CommandsThread(dataOutputStream, socket);
+			Thread commandsThread = new Thread(commandsRunnable);
 			listenerThread.start();
-//			commandsThread.start();
+			commandsThread.start();	
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-
+		
 	}
 }
