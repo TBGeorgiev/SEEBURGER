@@ -42,7 +42,7 @@ public class Main
 
 		try
 		{
-			socket = new Socket("localhost", 21000);
+			socket = new Socket("192.168.0.107", 21000);
 			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 			DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 

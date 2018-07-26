@@ -41,6 +41,23 @@ public class FileClient
 
 			DataInputStream dis = new DataInputStream(bis);
 			dis.readFully(mybytearray, 0, mybytearray.length);
+			
+			
+			
+			
+			
+			
+			
+			//test for base64 encoding
+			mybytearray = Base64Utilities.encodedBytes(mybytearray);
+			
+			
+			
+			
+			
+			
+			
+			
 
 			OutputStream os = sock.getOutputStream();
 
@@ -71,12 +88,12 @@ public class FileClient
 				System.out.println(hashAnswer);
 			}
 			// Closing socket
-			os.close();
-			dos.close();
 			System.out.println("Do you want to send more files?\ny / n:");
 			String answer = scanner.nextLine();
 			if (answer.equalsIgnoreCase("n"))
 			{
+				os.close();
+				dos.close();
 				sock.close();
 				break;
 			} else if (answer.equalsIgnoreCase("y"))
