@@ -47,7 +47,7 @@ public class FileClient
 			
 			
 			
-			
+			//TODO Make file encryption on the fly
 			//test for base64 encoding
 			mybytearray = Base64Utilities.encodedBytes(mybytearray);
 			

@@ -21,9 +21,9 @@ public final class ChecksumUtilities
 	 * @author ts.georgiev
 	 *
 	 */
-	public static byte[] createChecksum(String filename) throws Exception
+	private static byte[] createChecksum(String fileAbsolutePath) throws Exception
 	{
-		InputStream fis = new FileInputStream(filename);
+		InputStream fis = new FileInputStream(fileAbsolutePath);
 
 		byte[] buffer = new byte[1024];
 		MessageDigest complete = MessageDigest.getInstance("MD5");

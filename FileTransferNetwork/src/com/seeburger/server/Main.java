@@ -89,6 +89,7 @@ public class Main
 				dataOutputStream.writeUTF(printWelcomeMenu());
 				int choice = Integer.parseInt(dataInputStream.readUTF());
 
+					//choice 1 means file transfer inside the server
 				if (choice == 1)
 				{
 					while (!RunnableClass.getToStop())
@@ -112,6 +113,8 @@ public class Main
 					}
 					serverSocket.close();
 					executorService.shutdown();
+					
+					//choice 2 means file upload from client to server
 				} else if (choice == 2)
 				{
 					// System.out.println("Inside choice 2");

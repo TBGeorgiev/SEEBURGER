@@ -1,9 +1,11 @@
 package com.seeburger.client;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -22,6 +24,7 @@ public class Main
 	public static Logger logger = Logger.getLogger("FileLog");
 	private static FileHandler fHandler;
 	private static Socket socket;
+	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 
 	public static void main(String[] args)
@@ -42,7 +45,21 @@ public class Main
 
 		try
 		{
-			socket = new Socket("192.168.0.107", 21000);
+			//192.168.0.107 (home laptop ip)
+			String ipString = "";
+
+			System.out.println("1: localhost\n2: enter ip");
+			int localOrNot = Integer.parseInt(reader.readLine());
+			switch (localOrNot)
+			{
+			case 1:
+				ipString = "localhost";
+				break;
+			case 2:
+				ipString = reader.readLine();
+				break;
+			}
+			socket = new Socket(ipString, 21000);
 			DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
 			DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
