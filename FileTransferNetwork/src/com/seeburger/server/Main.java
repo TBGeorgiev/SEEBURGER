@@ -80,57 +80,58 @@ public class Main
 				}
 			}
 
-			socket = serverSocket.accept();
-			if (socket.isConnected())
+			while (true)
 			{
-				logger.info("Client connected from: " + socket.getInetAddress() + "\n" + dateFormat.format(date));
-				DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-				DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-				dataOutputStream.writeUTF(printWelcomeMenu());
-				int choice = Integer.parseInt(dataInputStream.readUTF());
-
-					//choice 1 means file transfer inside the server
-				if (choice == 1)
+				socket = serverSocket.accept();
+				if (socket.isConnected())
 				{
-					while (!RunnableClass.getToStop())
+					logger.info("Client connected from: " + socket.getInetAddress() + "\n" + dateFormat.format(date));
+					DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+					DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+					dataOutputStream.writeUTF(printWelcomeMenu());
+					int choice = Integer.parseInt(dataInputStream.readUTF());
+
+					// choice 1 means file transfer inside the server
+					if (choice == 1)
 					{
-						dataOutputStream.writeUTF(printMainMenu());
-						Finder finder;
-						int finderSelect = Integer.parseInt(dataInputStream.readUTF());
+						while (!RunnableClass.getToStop())
+						{
+							dataOutputStream.writeUTF(printMainMenu());
+							Finder finder;
+							int finderSelect = Integer.parseInt(dataInputStream.readUTF());
 
-						finder = initializeFinder(executorService, finderSelect, dataOutputStream, dataInputStream);
-						try
-						{
-							finder.transferFiles();
-						} catch (IOException e)
-						{
-							System.exit(0);
-							e.printStackTrace();
-						} catch (InterruptedException e)
-						{
-							e.printStackTrace();
+							finder = initializeFinder(executorService, finderSelect, dataOutputStream, dataInputStream);
+							try
+							{
+								finder.transferFiles();
+							} catch (IOException e)
+							{
+								System.exit(0);
+								e.printStackTrace();
+							} catch (InterruptedException e)
+							{
+								e.printStackTrace();
+							}
 						}
-					}
-					serverSocket.close();
-					executorService.shutdown();
-					
-					//choice 2 means file upload from client to server
-				} else if (choice == 2)
-				{
-					// System.out.println("Inside choice 2");
+						serverSocket.close();
+						executorService.shutdown();
 
-					dataOutputStream.writeUTF("exit_listener");
-					FileReceiverThread fileReceiverThread = new FileReceiverThread(socket, serverSocket);
-					executorService.execute(fileReceiverThread);
+						// choice 2 means file upload from client to server
+					} else if (choice == 2)
+					{
+						dataOutputStream.writeUTF("exit_listener");
+						FileReceiverThread fileReceiverThread = new FileReceiverThread(socket);
+						executorService.execute(fileReceiverThread);
+					}
+					// serverSocket.close();
+					// executorService.shutdown();
+
 				}
-				// serverSocket.close();
-				// executorService.shutdown();
 
 			}
 
 		} catch (IOException e1)
 		{
-//			System.exit(0);
 			Main.getLogger().log(Level.WARNING, e1.getMessage(), e1);
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -166,7 +167,7 @@ public class Main
 				// break;
 			} catch (IOException e)
 			{
-//				System.exit(0);
+				// System.exit(0);
 				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}

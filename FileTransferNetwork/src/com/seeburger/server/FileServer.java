@@ -11,35 +11,31 @@ import java.io.*;
 public class FileServer
 {
 	private Socket clientSocket;
-	private ServerSocket serverSocket;
 	private String hashStringBefore;
+	private String choice;
 
-	public FileServer(Socket clientSocket, ServerSocket serverSocket)
+	public FileServer(Socket clientSocket)
 	{
 		this.clientSocket = clientSocket;
-		this.serverSocket = serverSocket;
 	}
 
 	public void startFileServer() throws IOException
 	{
+		InputStream in = clientSocket.getInputStream();
+		DataInputStream clientData = new DataInputStream(in);
 
+		choice = clientData.readUTF();
 		int bytesRead;
 
 		while (true)
 		{
-
-			// clientSocket = serverSocket.accept();
 			if (clientSocket.isClosed())
 			{
-				clientSocket = serverSocket.accept();
+				break;
 			}
-
-			InputStream in = clientSocket.getInputStream();
-
-			DataInputStream clientData = new DataInputStream(in);
 			BufferedInputStream bis = new BufferedInputStream(clientData);
 
-			String choice = clientData.readUTF();
+			// String choice = clientData.readUTF();
 			if (choice.equalsIgnoreCase("y"))
 			{
 				hashStringBefore = clientData.readUTF();
@@ -49,30 +45,31 @@ public class FileServer
 			OutputStream output = new FileOutputStream(fileName);
 			long size = clientData.readLong();
 			byte[] buffer = new byte[300];
-			
-			//TODO Make file decryption on the fly
+
+			// TODO Make file decryption on the fly
 			while (size > 0 && (bytesRead = clientData.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1)
 			{
-				//test for base64 decoding on the fly
-//				buffer = Base64Utilities.decodedBytes(buffer);
+				// test for base64 decoding on the fly
+				// buffer = Base64Utilities.decodedBytes(buffer);
 				output.write(buffer, 0, bytesRead);
 				size -= bytesRead;
 			}
 			// Closing the FileOutputStream handle
 			output.close();
 
-			try {
+			try
+			{
 				Base64Utilities.decode(fileName, fileName + "_decoded");
 				Files.delete(Paths.get(fileName));
 				File file = new File(fileName + "_decoded");
 				file.renameTo(new File(fileName));
-			} catch (Exception e) {
+			} catch (Exception e)
+			{
 				e.printStackTrace();
 			}
-			
+
 			System.out.println("File " + fileName + " uploaded successfully from: " + clientSocket);
 			Main.getLogger().info("File " + fileName + " uploaded successfully from: " + clientSocket);
-
 
 			if (choice.equalsIgnoreCase("y"))
 			{
@@ -88,9 +85,13 @@ public class FileServer
 					Main.getLogger().info("\tFile hash mismatch!\n" + hashStringBefore + "\n" + newHashString);
 					dataOutputStream.writeUTF("\tFile hash mismatch!\n" + hashStringBefore + "\n" + newHashString);
 				}
-			} else {
+			}
+			String uploadMore = clientData.readUTF();
+			if (uploadMore.equalsIgnoreCase("n"))
+			{
 				in.close();
 				clientData.close();
+				break;
 			}
 		}
 	}

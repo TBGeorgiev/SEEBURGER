@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -53,6 +54,7 @@ public final class Base64Utilities {
 
 	}
 
+
 	public static void writeDecodedByteArraysToFile(String sourceFile, String targetFileArg) throws IOException {
 		File file = new File(sourceFile);
 		File targetFile = new File(targetFileArg);
@@ -84,6 +86,32 @@ public final class Base64Utilities {
 		writer.flush();
 		writer.close();
 		reader.close();
+
+	}
+
+	public static long encodeFile(File toEncode, File encodedFile) throws IOException {
+		BufferedInputStream reader = new BufferedInputStream(new FileInputStream(toEncode));
+
+		BufferedOutputStream writer = new BufferedOutputStream(new FileOutputStream(encodedFile));
+
+		int read = -1;
+		byte[] bytez = new byte[300];
+		try {
+			while ((read = reader.read(bytez)) != -1) {
+				byte[] realBuff = Arrays.copyOf(bytez, read);
+				byte[] decodedBytes = Base64.getEncoder().encode(realBuff);
+				writer.write(decodedBytes);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		writer.flush();
+		writer.close();
+		reader.close();
+
+		return encodedFile.length();
 
 	}
 
