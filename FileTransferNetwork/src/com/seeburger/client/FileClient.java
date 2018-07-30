@@ -31,21 +31,16 @@ public class FileClient
 
 		while (true)
 		{
-			// Send file
 			System.out.println("Enter the file's absolute path: ");
 			String filePath = scanner.nextLine();
 			File myFile = new File(filePath);
 			File encodedFile = new File(filePath + "_encoded");
-			// Base64Utilities.encode(filePath, filePath + "_encoded");
 			Base64Utilities.encodeFile(myFile, encodedFile);
-			byte[] mybytearray = new byte[(int) encodedFile.length()];
 
 			FileInputStream fis = new FileInputStream(encodedFile);
 			BufferedInputStream bis = new BufferedInputStream(fis);
-			// bis.read(mybytearray, 0, mybytearray.length);
 
 			DataInputStream dis = new DataInputStream(bis);
-			dis.readFully(mybytearray, 0, mybytearray.length);
 
 			// TODO Make file encryption on the fly
 
@@ -57,8 +52,15 @@ public class FileClient
 
 			// Sending file name and file size to the server
 			dos.writeUTF(myFile.getName());
-			dos.writeLong(mybytearray.length);
-			dos.write(mybytearray, 0, mybytearray.length);
+			dos.writeLong(encodedFile.length());
+
+			// Send file
+			int count;
+			byte[] buffer = new byte[8192];
+			while ((count = dis.read(buffer)) > 0)
+			{
+				dos.write(buffer, 0, count);
+			}
 			dos.flush();
 
 			fis.close();

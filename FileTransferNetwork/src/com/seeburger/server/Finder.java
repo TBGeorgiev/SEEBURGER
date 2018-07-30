@@ -7,9 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 /**
  * Performs various checks about the files and the location before starting a

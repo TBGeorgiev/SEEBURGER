@@ -101,8 +101,6 @@ public class RunnableClass implements Runnable
 				{
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				}
-				// dout.writeUTF("Enter 'y' if you want to continue or 'end' if you want to
-				// exit.");
 			} catch (IOException e)
 			{
 				e.printStackTrace();

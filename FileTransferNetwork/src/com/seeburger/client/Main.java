@@ -14,7 +14,7 @@ import java.util.logging.SimpleFormatter;
 
 /**
  * Client used to send commands and receive information from the server of the
- * file transferring app.
+ * file transferring application.
  *
  * @author ts.georgiev
  *
@@ -26,10 +26,8 @@ public class Main
 	private static Socket socket;
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-
 	public static void main(String[] args)
 	{
-
 		try
 		{
 			fHandler = new FileHandler("ClientLog.log");
@@ -42,10 +40,9 @@ public class Main
 			e2.printStackTrace();
 		}
 
-
 		try
 		{
-			//192.168.0.107 (home laptop ip)
+			// 192.168.0.107 (home laptop ip)
 			String ipString = "";
 
 			System.out.println("1: localhost\n2: enter ip");

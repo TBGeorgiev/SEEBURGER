@@ -16,6 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+//VM Launch Arguments (no longer needed)
+//-Xms512m -Xmx4g
+
 /**
  * Moves files from one location to another and logs the details of the moved
  * files in a log file and also displays a logger on the console. It's possible
@@ -91,7 +94,7 @@ public class Main
 					dataOutputStream.writeUTF(printWelcomeMenu());
 					int choice = Integer.parseInt(dataInputStream.readUTF());
 
-					// choice 1 means file transfer inside the server
+					// choice 1 = file transfer inside the server
 					if (choice == 1)
 					{
 						while (!RunnableClass.getToStop())
@@ -116,7 +119,7 @@ public class Main
 						serverSocket.close();
 						executorService.shutdown();
 
-						// choice 2 means file upload from client to server
+						// choice 2 = file upload from client to server
 					} else if (choice == 2)
 					{
 						dataOutputStream.writeUTF("exit_listener");
@@ -133,7 +136,6 @@ public class Main
 		} catch (IOException e1)
 		{
 			Main.getLogger().log(Level.WARNING, e1.getMessage(), e1);
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -164,10 +166,8 @@ public class Main
 				dataOutputStream.writeUTF("Incorrect input. Try again.");
 				choice = Integer.parseInt(dataInputStream.readUTF());
 				return initializeFinder(executorService, choice, dataOutputStream, dataInputStream);
-				// break;
 			} catch (IOException e)
 			{
-				// System.exit(0);
 				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}

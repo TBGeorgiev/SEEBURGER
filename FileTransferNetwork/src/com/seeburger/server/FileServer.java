@@ -4,8 +4,6 @@ import com.seeburger.utilities.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Base64;
 import java.io.*;
 
 public class FileServer
@@ -33,7 +31,7 @@ public class FileServer
 			{
 				break;
 			}
-			BufferedInputStream bis = new BufferedInputStream(clientData);
+//			BufferedInputStream bis = new BufferedInputStream(clientData);
 
 			// String choice = clientData.readUTF();
 			if (choice.equalsIgnoreCase("y"))
@@ -44,13 +42,11 @@ public class FileServer
 			String fileName = clientData.readUTF();
 			OutputStream output = new FileOutputStream(fileName);
 			long size = clientData.readLong();
-			byte[] buffer = new byte[300];
+			byte[] buffer = new byte[8192];
 
 			// TODO Make file decryption on the fly
 			while (size > 0 && (bytesRead = clientData.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1)
 			{
-				// test for base64 decoding on the fly
-				// buffer = Base64Utilities.decodedBytes(buffer);
 				output.write(buffer, 0, bytesRead);
 				size -= bytesRead;
 			}

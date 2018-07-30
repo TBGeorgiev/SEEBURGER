@@ -4,7 +4,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Thread for checking the location/destination and correct file amount.
