@@ -4,6 +4,7 @@ import com.seeburger.utilities.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.io.*;
 
 public class FileServer
@@ -11,6 +12,7 @@ public class FileServer
 	private Socket clientSocket;
 	private String hashStringBefore;
 	private String choice;
+	private static final int BUFFER_SIZE = 6000;
 
 	public FileServer(Socket clientSocket)
 	{
@@ -31,38 +33,32 @@ public class FileServer
 			{
 				break;
 			}
-//			BufferedInputStream bis = new BufferedInputStream(clientData);
-
-			// String choice = clientData.readUTF();
 			if (choice.equalsIgnoreCase("y"))
 			{
 				hashStringBefore = clientData.readUTF();
 			}
-
 			String fileName = clientData.readUTF();
 			OutputStream output = new FileOutputStream(fileName);
-			long size = clientData.readLong();
-			byte[] buffer = new byte[8192];
+			byte[] buffer = new byte[BUFFER_SIZE];
 
-			// TODO Make file decryption on the fly
-			while (size > 0 && (bytesRead = clientData.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1)
+			boolean end = false;
+			while ((bytesRead = clientData.read(buffer)) != -1)
 			{
-				output.write(buffer, 0, bytesRead);
-				size -= bytesRead;
+				byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
+				if (realBuff[realBuff.length - 1] == -1)
+				{
+					realBuff = Arrays.copyOf(buffer, bytesRead - 1);
+					end = true;
+				}
+				output.write(Base64Utilities.decodedBytes(realBuff));
+				output.flush();
+				if (end)
+				{
+					break;
+				}
 			}
 			// Closing the FileOutputStream handle
 			output.close();
-
-			try
-			{
-				Base64Utilities.decode(fileName, fileName + "_decoded");
-				Files.delete(Paths.get(fileName));
-				File file = new File(fileName + "_decoded");
-				file.renameTo(new File(fileName));
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
 
 			System.out.println("File " + fileName + " uploaded successfully from: " + clientSocket);
 			Main.getLogger().info("File " + fileName + " uploaded successfully from: " + clientSocket);

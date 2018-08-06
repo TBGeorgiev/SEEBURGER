@@ -11,11 +11,11 @@ import java.util.Base64;
 
 public final class Base64Utilities
 {
-	private static final int BUFFER_SIZE = 300; // 300 seems to be the magic number
+	private static final int BUFFER_SIZE = 6000; // needs to divide by 3
 
-	public static byte[] encodedBytes(byte[] bytesToEncode)
+	public static byte[] encodedBytes(byte[] b)
 	{
-		return Base64.getEncoder().encode(bytesToEncode);
+		return Base64.getEncoder().encode(b);
 	}
 
 	public static byte[] decodedBytes(byte[] bytesToDecode)
@@ -86,6 +86,7 @@ public final class Base64Utilities
 		reader.close();
 
 	}
+	
 
 	public static long encodeFile(File toEncode, File encodedFile) throws IOException
 	{
@@ -134,10 +135,10 @@ public final class Base64Utilities
 	public static void main(String[] args) throws Exception
 	{
 		// File f = new File("C:\\tmp\\changelog.pdf");
-		encode("C:\\Users\\ts.georgiev\\Documents\\New Version\\new again lol\\testFile\\2\\testFile.file",
-				"C:\\Users\\ts.georgiev\\Documents\\New Version\\new again lol\\testFile\\2\\testFileE.file");
-		decode("C:\\Users\\ts.georgiev\\Documents\\New Version\\new again lol\\testFile\\2\\testFileE.file",
-				"testFileD.file");
+		encode("C:\\Users\\Public\\Pictures\\Sample Pictures\\2.jpg",
+				"C:\\Users\\Public\\Pictures\\Sample Pictures\\2e.jpg");
+		decode("C:\\Users\\Public\\Pictures\\Sample Pictures\\2e.jpg",
+				"C:\\Users\\Public\\Pictures\\Sample Pictures\\2d.jpg");
 	}
 
 	public static byte[] loadFileAsBytesArray(String fileName) throws Exception
