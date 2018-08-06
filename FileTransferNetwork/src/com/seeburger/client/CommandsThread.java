@@ -23,7 +23,7 @@ public class CommandsThread implements Runnable
 	private static volatile boolean toExit;
 	private Socket socket;
 
-	public CommandsThread(DataOutputStream dataOutputStream, Socket socket)
+	protected CommandsThread(DataOutputStream dataOutputStream, Socket socket)
 	{
 		this.dataOutputStream = dataOutputStream;
 		this.socket = socket;
@@ -62,11 +62,10 @@ public class CommandsThread implements Runnable
 			}
 
 		}
-//		System.out.println("Exiting commands thread..");
 		toExit = true;
 	}
 
-	public static boolean getExitStatus()
+	protected static boolean getExitStatus()
 	{
 		return toExit;
 	}

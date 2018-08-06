@@ -7,9 +7,6 @@ import java.util.logging.Level;
 public class FileReceiverThread implements Runnable
 {
 	private Socket clientSocket;
-	public final static int FILE_SIZE = 6022386;
-	public String FILE_TO_RECEIVED = null;
-	public static boolean toStop = false;
 
 	public FileReceiverThread(Socket clientSocket)
 	{

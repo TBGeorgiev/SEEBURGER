@@ -13,12 +13,12 @@ public class DestinationChecker implements Runnable
 {
 
 	private RunnableClass runnableClass;
+	private DataOutputStream dout;
 	private String location;
 	private String destination;
 	private int numberOfFiles;
-	private DataOutputStream dout;
 
-	public DestinationChecker(RunnableClass runnableClass, String location, String destination, int numberOfFiles,
+	protected DestinationChecker(RunnableClass runnableClass, String location, String destination, int numberOfFiles,
 			DataOutputStream dout)
 	{
 		this.runnableClass = runnableClass;

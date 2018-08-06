@@ -21,12 +21,12 @@ public class RunnableClass implements Runnable
 	private volatile Object lock = new Object();
 	private volatile boolean movingFinished = false;
 	private static volatile boolean toStop = false;
+	private DataOutputStream dout;
 	private String destination;
 	private String location;
 	private Logger logger;
-	private DataOutputStream dout;
 
-	public RunnableClass(String location, String dest, Logger logger, DataOutputStream dout)
+	protected RunnableClass(String location, String dest, Logger logger, DataOutputStream dout)
 	{
 		this.destination = dest;
 		this.location = location;
@@ -34,12 +34,12 @@ public class RunnableClass implements Runnable
 		this.dout = dout;
 	}
 
-	public void setToStop(boolean toStop)
+	protected void setToStop(boolean toStop)
 	{
 		RunnableClass.toStop = toStop;
 	}
 
-	public static boolean getToStop()
+	protected static boolean getToStop()
 	{
 		return toStop;
 	}
@@ -108,7 +108,7 @@ public class RunnableClass implements Runnable
 		}
 	}
 
-	public Object getLock()
+	protected Object getLock()
 	{
 		return lock;
 	}
@@ -138,7 +138,7 @@ public class RunnableClass implements Runnable
 		}
 	}
 
-	public boolean isMovingFinished()
+	protected boolean isMovingFinished()
 	{
 		return movingFinished;
 	}

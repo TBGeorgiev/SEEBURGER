@@ -6,8 +6,6 @@ import java.util.logging.Level;
 
 import com.seeburger.server.Main;
 
-
-
 /**Listens for messages sent by the server
  * and displays them on the console.
  * @author ts.georgiev
@@ -16,7 +14,7 @@ import com.seeburger.server.Main;
 public class ListenerThread implements Runnable {
 	private DataInputStream dataInputStream;
 
-	public ListenerThread(DataInputStream dataInputStream) {
+	protected ListenerThread(DataInputStream dataInputStream) {
 		this.dataInputStream = dataInputStream;
 	}
 

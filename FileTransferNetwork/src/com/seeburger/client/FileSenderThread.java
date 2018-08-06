@@ -10,7 +10,7 @@ public class FileSenderThread implements Runnable
 {
 	private Socket socket;
 
-	public FileSenderThread(Socket socket)
+	protected FileSenderThread(Socket socket)
 	{
 		this.socket = socket;
 	}

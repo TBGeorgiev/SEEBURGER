@@ -116,8 +116,6 @@ public class Main
 								e.printStackTrace();
 							}
 						}
-						serverSocket.close();
-						executorService.shutdown();
 
 						// choice 2 = file upload from client to server
 					} else if (choice == 2)
@@ -126,12 +124,11 @@ public class Main
 						FileReceiverThread fileReceiverThread = new FileReceiverThread(socket);
 						executorService.execute(fileReceiverThread);
 					}
-					// serverSocket.close();
-					// executorService.shutdown();
-
 				}
 
 			}
+			// serverSocket.close();
+			// executorService.shutdown();
 
 		} catch (IOException e1)
 		{
@@ -187,12 +184,12 @@ public class Main
 				+ "\n3: Transfer files with location tests only.\n4: Transfer files with both tests enabled.");
 	}
 
-	public static int getSelector()
+	protected static int getSelector()
 	{
 		return selector;
 	}
 
-	public static void setSelector(int toSet)
+	protected static void setSelector(int toSet)
 	{
 		selector = toSet;
 	}
@@ -202,7 +199,7 @@ public class Main
 		System.out.println("Server started. Port: " + port + "\nWaiting for a connection.");
 	}
 
-	public static Socket getClientSocket()
+	protected static Socket getClientSocket()
 	{
 		return socket;
 	}

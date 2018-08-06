@@ -21,7 +21,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class Main
 {
-	public static Logger logger = Logger.getLogger("FileLog");
+	protected static Logger logger = Logger.getLogger("FileLog");
 	private static FileHandler fHandler;
 	private static Socket socket;
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -73,7 +73,7 @@ public class Main
 		}
 	}
 
-	public static Logger getLogger()
+	protected static Logger getLogger()
 	{
 		return logger;
 	}

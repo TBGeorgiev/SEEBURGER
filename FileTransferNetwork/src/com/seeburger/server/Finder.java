@@ -17,19 +17,19 @@ import java.util.logging.Logger;
 
 public class Finder
 {
-	private static String DIRECTORY_TO_SEARCH = "Enter a directory to search:";
-	private static String MOVE_DESTINATION = "Enter the destination you want to move the files to:";
-	private ExecutorService executorService;
-	private boolean emptyFolder;
-	private Logger logger;
+	private static final String DIRECTORY_TO_SEARCH = "Enter a directory to search:";
+	private static final String MOVE_DESTINATION = "Enter the destination you want to move the files to:";
 	private String finalDestinationString;
+	private DataOutputStream dout;
+	private DataInputStream dataInputStream;
+	private ExecutorService executorService;
+	private Logger logger;
+	private boolean emptyFolder;
 	private boolean fileIntegrityTest;
 	private boolean locationAndDestinationTest;
 	private boolean testsToPerform;
-	private DataOutputStream dout;
-	private DataInputStream dataInputStream;
 
-	public Finder(ExecutorService executorService, boolean fileIntegrityTest, boolean locationAndDestinationTest,
+	protected Finder(ExecutorService executorService, boolean fileIntegrityTest, boolean locationAndDestinationTest,
 			DataOutputStream dout, DataInputStream dataInputStream, Logger logger)
 	{
 		this.executorService = executorService;
@@ -41,7 +41,7 @@ public class Finder
 	}
 
 	// starts the main transfer method
-	public void transferFiles() throws IOException, InterruptedException
+	protected void transferFiles() throws IOException, InterruptedException
 	{
 		this.dout.writeUTF(DIRECTORY_TO_SEARCH);
 		String directory = dataInputStream.readUTF();
@@ -53,7 +53,7 @@ public class Finder
 	}
 
 	// performs checks and starts a file moving thread if files are present
-	public void lookForFiles(String location, String destination) throws InterruptedException, IOException
+	protected void lookForFiles(String location, String destination) throws InterruptedException, IOException
 	{
 		boolean locationPartitionExists = false;
 		boolean destinationPartitionExists = false;
@@ -168,12 +168,14 @@ public class Finder
 		continueOperations(runnableClass);
 	}
 
-	// main thread asks the user if he wants to start a new
-	// file moving thread while the other one is still moving a file/s
-	// or if he wants to stop the current operation
-	// if the user decides to stop (by typing 'end') - the program
-	// will stop after the moving of the current file is finished
-	// to prevent file corruption
+	 /*
+	  * main thread asks the user if he wants to start a new
+	  * file moving thread while the other one is still moving a file/s
+	  * or if he wants to stop the current operation
+	  * if the user decides to stop (by typing 'end') - the program
+	  * will stop after the moving of the current file is finished
+	  * to prevent file corruption
+	 */
 	private void continueOperations(RunnableClass runnableClass) throws IOException, InterruptedException
 	{
 		this.dout.writeUTF(

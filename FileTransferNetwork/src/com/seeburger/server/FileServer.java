@@ -2,17 +2,15 @@ package com.seeburger.server;
 
 import com.seeburger.utilities.*;
 import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.io.*;
 
 public class FileServer
 {
+	private static final int BUFFER_SIZE = 6000;
 	private Socket clientSocket;
 	private String hashStringBefore;
 	private String choice;
-	private static final int BUFFER_SIZE = 6000;
 
 	public FileServer(Socket clientSocket)
 	{

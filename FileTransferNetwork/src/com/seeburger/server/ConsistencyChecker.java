@@ -19,11 +19,11 @@ import java.util.logging.Level;
 public class ConsistencyChecker implements Runnable
 {
 	private RunnableClass runnableClass;
-	private String destinationString;
-	private LinkedHashMap<String, String> bytesList;
 	private DataOutputStream dout;
+	private LinkedHashMap<String, String> bytesList;
+	private String destinationString;
 
-	public ConsistencyChecker(String destinationString, RunnableClass runnableClass,
+	protected ConsistencyChecker(String destinationString, RunnableClass runnableClass,
 			LinkedHashMap<String, String> fileByteStrings, DataOutputStream dout)
 	{
 		this.runnableClass = runnableClass;

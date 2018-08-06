@@ -2,25 +2,24 @@ package com.seeburger.client;
 
 import com.seeburger.utilities.*;
 import java.net.*;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.io.*;
 
 public class FileClient
 {
+	private static final int BUFFER_SIZE = 6000;
 	private Socket sock;
 	private Scanner scanner = new Scanner(System.in);
 	private String choice;
 	private String fileHashString;
-	private static final int BUFFER_SIZE = 6000;
 
-	public FileClient(Socket sock)
+	protected FileClient(Socket sock)
 	{
 		this.sock = sock;
 	}
 
-	public void sendFile() throws IOException
+	protected void sendFile() throws IOException
 	{
 		System.out.println("Do you want to enable File Consistency Checks (MD5 Checksum)?\nY / N:");
 		choice = scanner.nextLine();
