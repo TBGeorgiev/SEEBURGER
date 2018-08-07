@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +17,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
+import com.seeburger.utilities.Authentication;
 
 //VM Launch Arguments (no longer needed)
 //-Xms512m -Xmx4g
@@ -29,9 +33,14 @@ import java.util.logging.SimpleFormatter;
  * the Finder class in the main method below. Each operation - file moving /
  * consistency check / location check - is done by a separate thread.
  *
- * Instructions on how to use the program: 1: Insert the absolute path of a
- * directory you want to move files from. 2: Insert the absolute path of the
- * destination directory you want to move the files to. 3: If the source
+ * Instructions on how to use the program:
+ * 1: Insert the absolute path of a
+ * directory you want to move files from.
+ *
+ * 2: Insert the absolute path of the
+ * destination directory you want to move the files to.
+ *
+ * 3: If the source
  * directory is empty - the program will wait for files to arrive. After the
  * file transfer is executed - you can enter 'y' to start a new file moving
  * operation done by a separate thread or you can enter 'end' to stop the
@@ -46,7 +55,7 @@ public class Main
 	public static Logger logger = Logger.getLogger("FileLog");
 	private static FileHandler fHandler;
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws NumberFormatException, NoSuchAlgorithmException, InvalidKeySpecException
 	{
 		ExecutorService executorService = Executors.newFixedThreadPool(100);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -91,39 +100,46 @@ public class Main
 					logger.info("Client connected from: " + socket.getInetAddress() + "\n" + dateFormat.format(date));
 					DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 					DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-					dataOutputStream.writeUTF(printWelcomeMenu());
-					int choice = Integer.parseInt(dataInputStream.readUTF());
 
-					// choice 1 = file transfer inside the server
-					if (choice == 1)
-					{
-						while (!RunnableClass.getToStop())
+					if (Authentication.serverSideAuthentication(dataInputStream, dataOutputStream)) {
+						dataOutputStream.writeUTF(printWelcomeMenu());
+						int choice = Integer.parseInt(dataInputStream.readUTF());
+
+						// choice 1 = file transfer inside the server
+						if (choice == 1)
 						{
-							dataOutputStream.writeUTF(printMainMenu());
-							Finder finder;
-							int finderSelect = Integer.parseInt(dataInputStream.readUTF());
+							while (!RunnableClass.getToStop())
+							{
+								dataOutputStream.writeUTF(printMainMenu());
+								Finder finder;
+								int finderSelect = Integer.parseInt(dataInputStream.readUTF());
 
-							finder = initializeFinder(executorService, finderSelect, dataOutputStream, dataInputStream);
-							try
-							{
-								finder.transferFiles();
-							} catch (IOException e)
-							{
-								System.exit(0);
-								e.printStackTrace();
-							} catch (InterruptedException e)
-							{
-								e.printStackTrace();
+								finder = initializeFinder(executorService, finderSelect, dataOutputStream, dataInputStream);
+								try
+								{
+									finder.transferFiles();
+								} catch (IOException e)
+								{
+//									System.exit(0);
+									e.printStackTrace();
+								} catch (InterruptedException e)
+								{
+									e.printStackTrace();
+								}
 							}
-						}
 
-						// choice 2 = file upload from client to server
-					} else if (choice == 2)
-					{
-						dataOutputStream.writeUTF("exit_listener");
-						FileReceiverThread fileReceiverThread = new FileReceiverThread(socket);
-						executorService.execute(fileReceiverThread);
+							// choice 2 = file upload from client to server
+						} else if (choice == 2)
+						{
+							dataOutputStream.writeUTF("exit_listener");
+							FileReceiverThread fileReceiverThread = new FileReceiverThread(socket);
+							executorService.execute(fileReceiverThread);
+						}
+					} else {
+						System.out.println("Server refused connection for: " + socket);
+						System.out.println("Waiting for new connection..");
 					}
+
 				}
 
 			}

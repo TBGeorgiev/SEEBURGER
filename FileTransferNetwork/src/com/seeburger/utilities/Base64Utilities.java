@@ -86,7 +86,6 @@ public final class Base64Utilities
 		reader.close();
 
 	}
-	
 
 	public static long encodeFile(File toEncode, File encodedFile) throws IOException
 	{

@@ -108,9 +108,10 @@ public class Finder
 			return;
 		}
 		File[] files = folder.listFiles();
-		// if no files are present in the directory
-		// it prints to the console once and checks
-		// for new files every 100 ms
+		/*
+		 * if no files are present in the directory it prints to the console once and
+		 * checks for new files every 100 ms
+		 */
 		if (!filesPresent(files))
 		{
 			if (!emptyFolder)
@@ -168,13 +169,12 @@ public class Finder
 		continueOperations(runnableClass);
 	}
 
-	 /*
-	  * main thread asks the user if he wants to start a new
-	  * file moving thread while the other one is still moving a file/s
-	  * or if he wants to stop the current operation
-	  * if the user decides to stop (by typing 'end') - the program
-	  * will stop after the moving of the current file is finished
-	  * to prevent file corruption
+	/*
+	 * main thread asks the user if he wants to start a new file moving thread while
+	 * the other one is still moving a file/s or if he wants to stop the current
+	 * operation if the user decides to stop (by typing 'end') - the program will
+	 * stop after the moving of the current file is finished to prevent file
+	 * corruption
 	 */
 	private void continueOperations(RunnableClass runnableClass) throws IOException, InterruptedException
 	{
