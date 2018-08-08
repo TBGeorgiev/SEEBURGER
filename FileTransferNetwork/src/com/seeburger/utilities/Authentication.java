@@ -42,20 +42,20 @@ public class Authentication
 				int responseToSaltFromServer = dataInputStream.readInt();
 				switch (responseToSaltFromServer)
 				{
-				case ServerClientCommunicationMessages.STATUS_OK:
+				case ServerClientCommunicationMessages.STATUS_HANDSHAKE_SUCCESS:
+					System.out.println("HANDSHAKE SUCCESS");
 					if (login)
 					{
 						// TODO login
-						System.out.println("login complete");
 					} else
 					{
+						UserManager.userRegister(dataInputStream, dataOutputStream, reader);
 						// TODO register
-						System.out.println("registration complete");
 					}
 					return true;
 
-				case ServerClientCommunicationMessages.STATUS_WRONG_INFO:
-					System.out.println("wrong info");
+				case ServerClientCommunicationMessages.STATUS_HANDSHAKE_FAILED:
+					System.out.println("HANDSHAKE FAILED");
 					break;
 				}
 			}
@@ -77,7 +77,12 @@ public class Authentication
 			switch (dataInputStream.readInt())
 			{
 			case ServerClientCommunicationMessages.REGISTER_PLAIN:
-				return checkMasterPasswordHash(dataInputStream, dataOutputStream);
+				boolean handshake = checkMasterPasswordHash(dataInputStream, dataOutputStream);
+				if (handshake) {
+					UserManager.serverRegister(dataInputStream, dataOutputStream);
+					return true;		
+				}
+				
 
 			case ServerClientCommunicationMessages.LOGIN_PLAIN:
 				return checkMasterPasswordHash(dataInputStream, dataOutputStream);
@@ -94,9 +99,9 @@ public class Authentication
 	private static boolean checkMasterPasswordHash(DataInputStream dataInputStream, DataOutputStream dataOutputStream)
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
 	{
-		// Generates a random salt string
+		// Generates a random salt string with a length of 4
 		String randomSaltString = UUID.randomUUID().toString().replaceAll("-", "");
-		randomSaltString.substring(0, 4);
+		randomSaltString = randomSaltString.substring(0, 4);
 		// Generates a random integer (iterations to hash)
 		int randomNum = ThreadLocalRandom.current().nextInt(2, 50);
 		dataOutputStream.writeUTF(ServerClientCommunicationMessages.STATUS_OK_SEND_SALT_AND_ITERATIONS + "<"
@@ -106,11 +111,12 @@ public class Authentication
 		if (masterPasswordCheck(hashedMasterPass, randomSaltString, randomNum))
 		{
 			System.out.println("SERVER SIDE HASH CHECK - OK");
-			dataOutputStream.writeInt(ServerClientCommunicationMessages.STATUS_OK);
+			dataOutputStream.writeInt(ServerClientCommunicationMessages.STATUS_HANDSHAKE_SUCCESS);
 			return true;
 		} else
 		{
-			System.out.println("HASH CHECK ERROR");
+			dataOutputStream.writeInt(ServerClientCommunicationMessages.STATUS_HANDSHAKE_FAILED);
+			System.out.println("HANDSHAKE FAILED");
 			return false;
 		}
 	}

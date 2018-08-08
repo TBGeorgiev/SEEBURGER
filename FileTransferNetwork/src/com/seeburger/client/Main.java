@@ -26,7 +26,7 @@ import com.seeburger.utilities.Authentication;
  */
 public class Main
 {
-	protected static Logger logger = Logger.getLogger("FileLog");
+	public static Logger logger = Logger.getLogger("FileLog");
 	private static FileHandler fHandler;
 	private static Socket socket;
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

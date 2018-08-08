@@ -19,7 +19,7 @@ public class Password
 		byte[] hash = f.generateSecret(spec).getEncoded();
 
 		System.out.println(ServerClientCommunicationMessages.MASTER_PASSWORD);
-		System.out.println(new String(saltedBytes));
+		System.out.println(salt);
 		System.out.println(new String(hash));
 
 		return new String(hash);

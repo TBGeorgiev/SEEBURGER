@@ -2,14 +2,27 @@ package com.seeburger.utilities;
 
 public class ServerClientCommunicationMessages
 {
+	public static final String MASTER_PASSWORD = "12345";
+
 	public static final int HELLO = 111;
 
 	public static final int REGISTER_PLAIN = 300;
 	public static final int LOGIN_PLAIN = 350;
 
-	public static final int STATUS_OK = 200;
-	public static final int STATUS_OK_SEND_SALT_AND_ITERATIONS = 100;
-	public static final int STATUS_WRONG_INFO = 403;
+	public static final int REGISTER_START = 310;
+	public static final int LOGIN_START = 360;
 
-	public static final String MASTER_PASSWORD = "12345";
+	public static final int USERDATA_READY_TO_BE_SENT = 500;
+	public static final int USERDATA_SENT = 550;
+
+	public static final int REGISTRATION_SUCCESS = 600;
+	public static final int REGISTRATION_FAILED = 650;
+
+	public static final int STATUS_OK = 50;
+	public static final int STATUS_OK_SEND_SALT_AND_ITERATIONS = 100;
+
+	public static final int STATUS_HANDSHAKE_SUCCESS = 200;
+	public static final int STATUS_HANDSHAKE_FAILED = 403;
+
+
 }

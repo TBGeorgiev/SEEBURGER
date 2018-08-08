@@ -57,7 +57,6 @@ public class Main
 
 	public static void main(String[] args) throws NumberFormatException, NoSuchAlgorithmException, InvalidKeySpecException
 	{
-		ExecutorService executorService = Executors.newFixedThreadPool(100);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		try
@@ -100,6 +99,7 @@ public class Main
 					logger.info("Client connected from: " + socket.getInetAddress() + "\n" + dateFormat.format(date));
 					DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 					DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+					ExecutorService executorService = Executors.newFixedThreadPool(100);
 
 					if (Authentication.serverSideAuthentication(dataInputStream, dataOutputStream)) {
 						dataOutputStream.writeUTF(printWelcomeMenu());
