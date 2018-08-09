@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class PasswordManager
+public class HashingManager
 {
 	public static String generateHashedMasterPass(String salt, int iterations)
 			throws NoSuchAlgorithmException, InvalidKeySpecException

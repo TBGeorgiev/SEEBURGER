@@ -30,7 +30,7 @@ public class DatabaseManager
 		}
 	}
 
-	public static boolean insertUserIntoDatabase(DataOutputStream outputStream, String usernameToRegister,
+	public static boolean insertUserIntoDatabase(String usernameToRegister,
 			String passwordToRegister, String emailToRegister) throws IOException
 	{
 
@@ -46,7 +46,7 @@ public class DatabaseManager
 				preparedStatement.setString(3, emailToRegister);
 				preparedStatement.execute();
 				System.out.println("User " + usernameToRegister + " added to the database successfully.");
-				outputStream.writeInt(ServerClientCommunicationMessages.REGISTRATION_SUCCESS);
+//				outputStream.writeInt(ServerClientCommunicationMessages.REGISTRATION_SUCCESS);
 				connection.close();
 				return true;
 			} catch (SQLException e)
@@ -58,7 +58,7 @@ public class DatabaseManager
 		} else
 		{
 			System.out.println("User already exists!");
-			outputStream.writeInt(ServerClientCommunicationMessages.REGISTRATION_FAILED_USER_EXISTS);
+//			outputStream.writeInt(ServerClientCommunicationMessages.REGISTRATION_FAILED_USER_EXISTS);
 
 		}
 		return false;

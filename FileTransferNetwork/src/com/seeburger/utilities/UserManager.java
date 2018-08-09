@@ -25,7 +25,7 @@ public class UserManager
 				// TODO password verifications
 				String password = reader.readLine();
 				// TODO user login needs to be fixed
-				password = PasswordManager.generateHashedPass(password);
+				password = HashingManager.generateHashedPass(password);
 				System.out.println(password);
 				System.out.println("Enter your email:");
 				// TODO checks for email
@@ -75,11 +75,16 @@ public class UserManager
 					String userData = inputStream.readUTF();
 					// split[3] is the code
 					String[] split = userData.split("#");
+					String username = split[0];
+					String password = split[1];
+					String email = split[2];
 					// DATABASE INSERTION
-					if (!DatabaseManager.insertUserIntoDatabase(outputStream, split[0], split[1], split[2]))
+					if (!DatabaseManager.insertUserIntoDatabase(username, password, email))
 					{
+						outputStream.writeInt(ServerClientCommunicationMessages.REGISTRATION_FAILED_USER_EXISTS);
 						return serverRegister(inputStream, outputStream);
 					}
+					outputStream.writeInt(ServerClientCommunicationMessages.REGISTRATION_SUCCESS);
 					return true;
 				}
 			}
@@ -103,7 +108,7 @@ public class UserManager
 				outputStream.writeUTF(username);
 				System.out.println("Enter your password:");
 				String password = reader.readLine();
-				password = PasswordManager.generateHashedPass(password);
+				password = HashingManager.generateHashedPass(password);
 				outputStream.writeUTF(password);
 				if (inputStream.readInt() == ServerClientCommunicationMessages.LOGIN_SUCCESS) {
 					System.out.println("User logged in.");

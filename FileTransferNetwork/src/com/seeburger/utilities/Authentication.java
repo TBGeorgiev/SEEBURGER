@@ -114,11 +114,11 @@ public class Authentication
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
 	{
 		// Generates a random salt string with the specified length
-		String randomSaltString = PasswordManager.generateRandomSalt(4);
+		String randomSaltString = HashingManager.generateRandomSalt(4);
 
 		// Generates a random integer with the selected maximum number of random
 		// iterations (must be above 2)
-		int randomNum = PasswordManager.generateRandomNumberOfIterations(50);
+		int randomNum = HashingManager.generateRandomNumberOfIterations(50);
 		dataOutputStream.writeUTF(ServerClientCommunicationMessages.STATUS_OK_SEND_SALT_AND_ITERATIONS + "<"
 				+ randomSaltString + "><" + randomNum + ">");
 		String hashedMasterPass = dataInputStream.readUTF();
@@ -139,7 +139,7 @@ public class Authentication
 	private static boolean masterPasswordCheck(String clientHash, String salt, int iterations)
 			throws NoSuchAlgorithmException, InvalidKeySpecException
 	{
-		String hashedString = PasswordManager.generateHashedMasterPass(salt, iterations);
+		String hashedString = HashingManager.generateHashedMasterPass(salt, iterations);
 		if (clientHash.equals(hashedString))
 		{
 			return true;
@@ -153,7 +153,7 @@ public class Authentication
 		String[] split = saltAndIterations.split("\\<");
 		String salt = split[1].substring(0, split[1].length() - 1);
 		int iterations = Integer.parseInt(split[2].substring(0, split[2].length() - 1));
-		String saltedMasterPassword = PasswordManager.generateHashedMasterPass(salt, iterations);
+		String saltedMasterPassword = HashingManager.generateHashedMasterPass(salt, iterations);
 		return saltedMasterPassword;
 	}
 }
