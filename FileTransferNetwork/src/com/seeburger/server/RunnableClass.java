@@ -97,7 +97,7 @@ public class RunnableClass implements Runnable
 			try
 			{
 				dout.writeUTF("Moving complete. Operation took: " + (end - current) + " miliseconds. ");
-				if (Main.getSelector() == 0)
+				if (ServerStart.getSelector() == 0)
 				{
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				}

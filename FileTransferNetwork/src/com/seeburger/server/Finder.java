@@ -30,14 +30,14 @@ public class Finder
 	private boolean testsToPerform;
 
 	protected Finder(ExecutorService executorService, boolean fileIntegrityTest, boolean locationAndDestinationTest,
-			DataOutputStream dout, DataInputStream dataInputStream, Logger logger)
+			DataOutputStream dout, DataInputStream dataInputStream)
 	{
 		this.executorService = executorService;
 		this.fileIntegrityTest = fileIntegrityTest;
 		this.locationAndDestinationTest = locationAndDestinationTest;
 		this.dout = dout;
 		this.dataInputStream = dataInputStream;
-		this.logger = logger;
+		// this.logger = logger;
 	}
 
 	// starts the main transfer method
@@ -135,16 +135,16 @@ public class Finder
 			if (location.charAt(0) == destination.charAt(0) && !testsToPerform)
 			{
 				testsToPerform = true;
-				System.out.println("Selector = " + Main.getSelector());
-				if (Main.getSelector() == 1)
+				System.out.println("Selector = " + ServerStart.getSelector());
+				if (ServerStart.getSelector() == 1)
 				{
-					Main.setSelector(0);
+					ServerStart.setSelector(0);
 				} else
 				{
-					Main.setSelector(1);
+					ServerStart.setSelector(1);
 				}
 				fileIntegrityTest = false;
-				System.out.println("New selector = " + Main.getSelector());
+				System.out.println("New selector = " + ServerStart.getSelector());
 				dout.writeUTF("MD5 checksum cancelled, because file transfer is done on the same partition.");
 			} else
 			{

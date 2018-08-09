@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 
+import com.seeburger.utilities.Logging;
+
 public class FileReceiverThread implements Runnable
 {
 	private Socket clientSocket;
@@ -22,7 +24,7 @@ public class FileReceiverThread implements Runnable
 			fileServer.startFileServer();
 		} catch (IOException e)
 		{
-			Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+			Logging.logger.log(Level.WARNING, e.getMessage(), e);
 			e.printStackTrace();
 		}
 	}

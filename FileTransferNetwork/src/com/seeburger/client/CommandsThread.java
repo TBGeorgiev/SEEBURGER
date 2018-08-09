@@ -1,13 +1,14 @@
 package com.seeburger.client;
 
 import java.io.BufferedReader;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.logging.Level;
 
-import com.seeburger.server.Main;
+import com.seeburger.utilities.Logging;
 
 /**
  * Thread used for sending messages to the server until the 'end' command is
@@ -48,7 +49,7 @@ public class CommandsThread implements Runnable
 				}
 			} catch (IOException e)
 			{
-				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+				Logging.logger.log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			try
@@ -57,7 +58,7 @@ public class CommandsThread implements Runnable
 				dataOutputStream.flush();
 			} catch (IOException e)
 			{
-				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+				Logging.logger.log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 

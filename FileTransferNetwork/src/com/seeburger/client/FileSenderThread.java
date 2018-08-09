@@ -1,10 +1,11 @@
 package com.seeburger.client;
 
 import java.io.IOException;
+
 import java.net.Socket;
 import java.util.logging.Level;
 
-import com.seeburger.server.Main;
+import com.seeburger.utilities.Logging;
 
 public class FileSenderThread implements Runnable
 {
@@ -24,7 +25,7 @@ public class FileSenderThread implements Runnable
 			fileClient.sendFile();
 		} catch (IOException e)
 		{
-			Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+			Logging.logger.log(Level.WARNING, e.getMessage(), e);
 			e.printStackTrace();
 		}
 	}

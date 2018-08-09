@@ -25,7 +25,7 @@ public final class ChecksumUtilities
 	{
 		InputStream fis = new FileInputStream(fileAbsolutePath);
 
-		byte[] buffer = new byte[8192]; //was 1024
+		byte[] buffer = new byte[8192]; // was 1024
 		MessageDigest complete = MessageDigest.getInstance("MD5");
 		int numRead;
 

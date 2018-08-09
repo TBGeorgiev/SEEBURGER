@@ -44,7 +44,7 @@ public class ConsistencyChecker implements Runnable
 					runnableClass.getLock().wait();
 				} catch (InterruptedException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -53,17 +53,17 @@ public class ConsistencyChecker implements Runnable
 				checkFiles(destinationString, bytesList);
 			} catch (Exception e)
 			{
-				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+				Logging.logger.log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
-			if (Main.getSelector() >= 2)
+			if (ServerStart.getSelector() >= 2)
 			{
 				try
 				{
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				} catch (IOException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -86,21 +86,21 @@ public class ConsistencyChecker implements Runnable
 		}
 
 		int index = 0;
-		Main.getLogger().info("Starting file integrity tests (MD5 checksum);");
+		Logging.logger.info("Starting file integrity tests (MD5 checksum);");
 		this.dout.writeUTF("File integrity tests:");
 		for (Map.Entry<String, String> map : bytesList.entrySet())
 		{
 			if (map.getValue().equals(sourceByteStrings.get(index)))
 			{
 				this.dout.writeUTF("\tMatching file: " + map.getKey());
-				Main.getLogger().info("\tMatching file: " + map.getKey());
+				Logging.logger.info("\tMatching file: " + map.getKey());
 			} else
 			{
 				this.dout.writeUTF("\tMismatching file: " + map.getKey());
-				Main.getLogger().info("\tMismatching file: " + map.getKey());
+				Logging.logger.info("\tMismatching file: " + map.getKey());
 			}
 			index++;
 		}
-		Main.getLogger().info("File integrity tests (MD5 checksum) finished.");
+		Logging.logger.info("File integrity tests (MD5 checksum) finished.");
 	}
 }

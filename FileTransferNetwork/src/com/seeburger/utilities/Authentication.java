@@ -7,9 +7,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
 
+/**
+ * Handles the client and server side authentication as well as generating and
+ * checking the hashed passwords.
+ * 
+ * @author ts.georgiev
+ *
+ */
 public class Authentication
 {
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -47,20 +53,23 @@ public class Authentication
 					if (login)
 					{
 						// TODO login
+						return UserManager.userLogin(dataInputStream, dataOutputStream, reader);
 					} else
 					{
-						UserManager.userRegister(dataInputStream, dataOutputStream, reader);
+						return UserManager.userRegister(dataInputStream, dataOutputStream, reader);
 						// TODO register
 					}
-					return true;
+					// return true;
 
 				case ServerClientCommunicationMessages.STATUS_HANDSHAKE_FAILED:
+					Logging.logger.log(Level.SEVERE, "HANDSHAKE FAILED");
 					System.out.println("HANDSHAKE FAILED");
 					break;
 				}
 			}
 		} catch (IOException e)
 		{
+			Logging.logger.log(Level.WARNING, e.getMessage(), e);
 			e.printStackTrace();
 		}
 		return false;
@@ -74,22 +83,28 @@ public class Authentication
 		{
 			dataOutputStream.writeInt(ServerClientCommunicationMessages.HELLO);
 			dataOutputStream.writeUTF("1: Login\n2: Register");
+			boolean handshake;
 			switch (dataInputStream.readInt())
 			{
 			case ServerClientCommunicationMessages.REGISTER_PLAIN:
-				boolean handshake = checkMasterPasswordHash(dataInputStream, dataOutputStream);
-				if (handshake) {
-					UserManager.serverRegister(dataInputStream, dataOutputStream);
-					return true;		
+				handshake = checkMasterPasswordHash(dataInputStream, dataOutputStream);
+				if (handshake)
+				{
+					return UserManager.serverRegister(dataInputStream, dataOutputStream);
+					// return true;
 				}
-				
 
 			case ServerClientCommunicationMessages.LOGIN_PLAIN:
-				return checkMasterPasswordHash(dataInputStream, dataOutputStream);
+				handshake = checkMasterPasswordHash(dataInputStream, dataOutputStream);
+				if (handshake)
+				{
+					return UserManager.serverLogin(dataInputStream, dataOutputStream);
+				}
 			}
 
 		} catch (IOException e)
 		{
+			Logging.logger.log(Level.WARNING, e.getMessage(), e);
 			e.printStackTrace();
 		}
 
@@ -99,11 +114,12 @@ public class Authentication
 	private static boolean checkMasterPasswordHash(DataInputStream dataInputStream, DataOutputStream dataOutputStream)
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException
 	{
-		// Generates a random salt string with a length of 4
-		String randomSaltString = UUID.randomUUID().toString().replaceAll("-", "");
-		randomSaltString = randomSaltString.substring(0, 4);
-		// Generates a random integer (iterations to hash)
-		int randomNum = ThreadLocalRandom.current().nextInt(2, 50);
+		// Generates a random salt string with the specified length
+		String randomSaltString = PasswordManager.generateRandomSalt(4);
+
+		// Generates a random integer with the selected maximum number of random
+		// iterations (must be above 2)
+		int randomNum = PasswordManager.generateRandomNumberOfIterations(50);
 		dataOutputStream.writeUTF(ServerClientCommunicationMessages.STATUS_OK_SEND_SALT_AND_ITERATIONS + "<"
 				+ randomSaltString + "><" + randomNum + ">");
 		String hashedMasterPass = dataInputStream.readUTF();
@@ -124,7 +140,7 @@ public class Authentication
 	private static boolean masterPasswordCheck(String clientHash, String salt, int iterations)
 			throws NoSuchAlgorithmException, InvalidKeySpecException
 	{
-		String hashedString = Password.generateHashedMasterPass(salt, iterations);
+		String hashedString = PasswordManager.generateHashedMasterPass(salt, iterations);
 		if (clientHash.equals(hashedString))
 		{
 			return true;
@@ -138,7 +154,7 @@ public class Authentication
 		String[] split = saltAndIterations.split("\\<");
 		String salt = split[1].substring(0, split[1].length() - 1);
 		int iterations = Integer.parseInt(split[2].substring(0, split[2].length() - 1));
-		String saltedMasterPassword = Password.generateHashedMasterPass(salt, iterations);
+		String saltedMasterPassword = PasswordManager.generateHashedMasterPass(salt, iterations);
 		return saltedMasterPassword;
 	}
 }

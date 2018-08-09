@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import com.seeburger.utilities.Logging;
+
 /**
  * Thread for checking the location/destination and correct file amount.
  */
@@ -41,40 +43,40 @@ public class DestinationChecker implements Runnable
 
 				} catch (InterruptedException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
 			try
 			{
-				Main.getLogger().info("Starting location and destination tests:");
+				Logging.logger.info("Starting location and destination tests:");
 				this.dout.writeUTF("Location and destination tests:");
 			} catch (IOException e)
 			{
-				Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+				Logging.logger.log(Level.WARNING, e.getMessage(), e);
 				e.printStackTrace();
 			}
 			if (isLocationEmpty(this.location))
 			{
 				try
 				{
-					Main.getLogger().info("\tLocation test: Good\" + \" - No files present.");
+					Logging.logger.info("\tLocation test: Good\" + \" - No files present.");
 					this.dout.writeUTF("\tLocation test: Good" + " - No files present.");
 				} catch (IOException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			} else
 			{
 				try
 				{
-					Main.getLogger()
+					Logging.logger
 							.info("\tLocation test: Bad" + " - Files still present in location: " + this.location);
 					this.dout.writeUTF("\tLocation test: Bad" + " - Files still present in location: " + this.location);
 				} catch (IOException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -82,37 +84,37 @@ public class DestinationChecker implements Runnable
 			{
 				try
 				{
-					Main.getLogger().info("\tDestination test: Good" + " - Number of files matches.");
+					Logging.logger.info("\tDestination test: Good" + " - Number of files matches.");
 					this.dout.writeUTF("\tDestination test: Good" + " - Number of files matches.");
 				} catch (IOException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			} else
 			{
 				try
 				{
-					Main.getLogger().info("\tDestination test: Bad" + " - Number of files mismatch.");
+					Logging.logger.info("\tDestination test: Bad" + " - Number of files mismatch.");
 					this.dout.writeUTF("\tDestination test: Bad" + " - Number of files mismatch.");
 				} catch (IOException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
-			if (Main.getSelector() == 1)
+			if (ServerStart.getSelector() == 1)
 			{
 				try
 				{
 					dout.writeUTF("Start a new operation?\nYes - 'y' Close application - 'end'");
 				} catch (IOException e)
 				{
-					Main.getLogger().log(Level.WARNING, e.getMessage(), e);
+					Logging.logger.log(Level.WARNING, e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
-			Main.getLogger().info("Location and destination tests finished.");
+			Logging.logger.info("Location and destination tests finished.");
 			runnableClass.getLock().notifyAll();
 		}
 

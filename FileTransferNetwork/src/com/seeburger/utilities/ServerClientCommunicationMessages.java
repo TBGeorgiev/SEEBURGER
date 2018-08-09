@@ -17,12 +17,14 @@ public class ServerClientCommunicationMessages
 
 	public static final int REGISTRATION_SUCCESS = 600;
 	public static final int REGISTRATION_FAILED = 650;
+	public static final int REGISTRATION_FAILED_USER_EXISTS = 660;
+	public static final int LOGIN_SUCCESS = 700;
+	public static final int LOGIN_FAILED = 750;
 
 	public static final int STATUS_OK = 50;
 	public static final int STATUS_OK_SEND_SALT_AND_ITERATIONS = 100;
 
 	public static final int STATUS_HANDSHAKE_SUCCESS = 200;
 	public static final int STATUS_HANDSHAKE_FAILED = 403;
-
 
 }
