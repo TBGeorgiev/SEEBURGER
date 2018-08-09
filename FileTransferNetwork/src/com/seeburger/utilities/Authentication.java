@@ -50,13 +50,13 @@ public class Authentication
 				{
 				case ServerClientCommunicationMessages.STATUS_HANDSHAKE_SUCCESS:
 					System.out.println("HANDSHAKE SUCCESS");
-					if (login)
+					if (!login)
 					{
 						// TODO login
-						return UserManager.userLogin(dataInputStream, dataOutputStream, reader);
+						return UserManager.userRegister(dataInputStream, dataOutputStream, reader);
 					} else
 					{
-						return UserManager.userRegister(dataInputStream, dataOutputStream, reader);
+						return UserManager.userLogin(dataInputStream, dataOutputStream, reader);
 						// TODO register
 					}
 					// return true;
@@ -91,7 +91,6 @@ public class Authentication
 				if (handshake)
 				{
 					return UserManager.serverRegister(dataInputStream, dataOutputStream);
-					// return true;
 				}
 
 			case ServerClientCommunicationMessages.LOGIN_PLAIN:

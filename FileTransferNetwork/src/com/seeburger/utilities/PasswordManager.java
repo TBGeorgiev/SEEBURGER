@@ -25,6 +25,36 @@ public class PasswordManager
 		return new String(hash);
 	}
 
+
+//	public static boolean checkHashedPasswordFromDatabase(String hashedPass, String clientHashedPass) {
+//		String[] split = hashedPass.split(">");
+////		String salt = split[0];
+////		int iterations = Integer.parseInt(split[1]);
+//		String hashedPassOnly = split[2];
+//		String[] split2 = clientHashedPass.split(">");
+//		String hashedClientPassOnly = split2[2];
+//		if (hashedPassOnly.equals(hashedClientPassOnly)) {
+//			return true;
+//		}
+//		return false;
+//	}
+
+	// TODO Hashing is currently hard-coded, make it dynamic
+	public static String generateHashedPass(String userPass)
+			throws NoSuchAlgorithmException, InvalidKeySpecException
+	{
+		String salt = ServerClientCommunicationMessages.MASTER_PASSWORD;
+		int iterations = 2;
+		byte[] saltedBytes = salt.getBytes();
+		KeySpec spec = new PBEKeySpec(userPass.toCharArray(), saltedBytes, iterations, 128);
+		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+		byte[] hash = f.generateSecret(spec).getEncoded();
+//		System.out.println("User pass: " + userPass);
+//		System.out.println("Salt: " + salt);
+//		System.out.println("Hashed pass: " + new String(hash));
+		return new String(salt + ">" + iterations + ">" + new String(hash));
+	}
+
 	public static String generateHashedPass(String userPass, String salt, int iterations)
 			throws NoSuchAlgorithmException, InvalidKeySpecException
 	{
@@ -35,7 +65,7 @@ public class PasswordManager
 		System.out.println("User pass: " + userPass);
 		System.out.println("Salt: " + salt);
 		System.out.println("Hashed pass: " + new String(hash));
-		return new String(hash);
+		return new String(salt + ">" + iterations + ">" + hash);
 	}
 
 	public static String generateRandomSalt(int lengthOfSalt)

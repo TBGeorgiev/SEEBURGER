@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
 
 public class UserManager
@@ -22,6 +24,9 @@ public class UserManager
 				System.out.println("Enter a password:");
 				// TODO password verifications
 				String password = reader.readLine();
+				// TODO user login needs to be fixed
+				password = PasswordManager.generateHashedPass(password);
+				System.out.println(password);
 				System.out.println("Enter your email:");
 				// TODO checks for email
 				String email = reader.readLine();
@@ -48,7 +53,7 @@ public class UserManager
 
 				}
 			}
-		} catch (IOException e)
+		} catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -95,16 +100,17 @@ public class UserManager
 			if (inputStream.readInt() == ServerClientCommunicationMessages.STATUS_OK) {
 				System.out.println("Enter your username:");
 				String username = reader.readLine();
+				outputStream.writeUTF(username);
 				System.out.println("Enter your password:");
 				String password = reader.readLine();
-				if (DatabaseManager.attemptLoginOnUser(username, password)) {
-					System.out.println("LOGIN SUCCESS");
-					outputStream.writeInt(ServerClientCommunicationMessages.LOGIN_SUCCESS);
+				password = PasswordManager.generateHashedPass(password);
+				outputStream.writeUTF(password);
+				if (inputStream.readInt() == ServerClientCommunicationMessages.LOGIN_SUCCESS) {
+					System.out.println("User logged in.");
 					return true;
-				}	
-				outputStream.writeInt(ServerClientCommunicationMessages.LOGIN_FAILED);
+				}
 			}		
-		} catch (IOException e)
+		} catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e)
 		{
 			Logging.logger.log(Level.WARNING, e.getMessage());
 			e.printStackTrace();
@@ -119,12 +125,14 @@ public class UserManager
 		{
 			if (inputStream.readInt() == ServerClientCommunicationMessages.LOGIN_START) {
 				outputStream.writeInt(ServerClientCommunicationMessages.STATUS_OK);
-				if (inputStream.readInt() == ServerClientCommunicationMessages.LOGIN_SUCCESS) {
+				String username = inputStream.readUTF();
+				String password = inputStream.readUTF();
+				if (DatabaseManager.attemptLoginOnUser(username, password)) {
+					System.out.println("LOGIN SUCCESS");
+					outputStream.writeInt(ServerClientCommunicationMessages.LOGIN_SUCCESS);
 					return true;
 				}
-				else if (inputStream.readInt() == ServerClientCommunicationMessages.LOGIN_FAILED) {
-					return false;
-				}
+				outputStream.writeInt(ServerClientCommunicationMessages.LOGIN_FAILED);
 			}
 		} catch (IOException e)
 		{
