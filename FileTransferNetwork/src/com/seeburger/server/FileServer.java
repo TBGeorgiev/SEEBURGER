@@ -2,12 +2,20 @@ package com.seeburger.server;
 
 import com.seeburger.utilities.*;
 import java.net.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import java.io.*;
 
 public class FileServer
 {
-	private static final int BUFFER_SIZE = 6000;
+	private static final int BUFFER_SIZE = 1024;
 	private Socket clientSocket;
 	private String hashStringBefore;
 	private String choice;
@@ -40,21 +48,36 @@ public class FileServer
 			byte[] buffer = new byte[BUFFER_SIZE];
 
 			boolean end = false;
+			int count = 0;
 			while ((bytesRead = clientData.read(buffer)) != -1)
 			{
-				byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
+				count++;
+				/*byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
 				if (realBuff[realBuff.length - 1] == -1)
 				{
 					realBuff = Arrays.copyOf(buffer, bytesRead - 1);
 					end = true;
-				}
-				output.write(Base64Utilities.decodedBytes(realBuff));
-				output.flush();
-				if (end)
+				}*/
+//				byte[] decodedBytes = Base64Utilities.decodedBytes(realBuff);
+
+				try
 				{
-					break;
+					output.write(EncryptionDecryptionManager.decryptBytes(buffer));
 				}
+				catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
+				{
+					Logging.logger.info("Number of iterations " + count);
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				output.flush();
+//				if (end)
+//				{
+//					break;
+//				}
 			}
+			
 			// Closing the FileOutputStream handle
 			output.close();
 

@@ -56,8 +56,8 @@ public class UserManager
 		} catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 			Logging.logger.log(Level.WARNING, e.getMessage(), e);
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -142,6 +142,7 @@ public class UserManager
 		} catch (IOException e)
 		{
 			// TODO Auto-generated catch block
+			Logging.logger.log(Level.WARNING, e.getMessage());
 			e.printStackTrace();
 		}
 		return false;

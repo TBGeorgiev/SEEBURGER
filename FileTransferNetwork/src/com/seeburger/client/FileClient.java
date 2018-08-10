@@ -2,13 +2,21 @@ package com.seeburger.client;
 
 import com.seeburger.utilities.*;
 import java.net.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Scanner;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import java.io.*;
 
 public class FileClient
 {
-	private static final int BUFFER_SIZE = 6000;
+	private static final int BUFFER_SIZE = 1024;
 	private Socket sock;
 	private Scanner scanner = new Scanner(System.in);
 	private String choice;
@@ -48,12 +56,26 @@ public class FileClient
 
 			// Send file in encoded byte packets
 			int count;
+			int counter = 0;
 			byte[] buffer = new byte[BUFFER_SIZE];
-			while ((count = dis.read(buffer)) > 0)
+			while ((count = dis.read(buffer)) != -1)
 			{
-				byte[] realBuff = Arrays.copyOf(buffer, count);
-				dos.write(Base64Utilities.encodedBytes(realBuff));
+				counter++;
+			//	byte[] realBuff = Arrays.copyOf(buffer, count);
+				try
+				{
+					byte[] encryptedBytes = EncryptionDecryptionManager.encryptBytes(buffer);
+					dos.write(encryptedBytes);
+					
+				}
+				catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			System.out.println(counter);
 			// Sending -1 to mark as EOF
 			dos.write(-1);
 
