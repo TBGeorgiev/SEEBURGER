@@ -16,7 +16,7 @@ import java.io.*;
 
 public class FileClient
 {
-	private static final int BUFFER_SIZE = 1024;
+	private static final int BUFFER_SIZE = 6000;
 	private Socket sock;
 	private Scanner scanner = new Scanner(System.in);
 	private String choice;
@@ -56,26 +56,22 @@ public class FileClient
 
 			// Send file in encoded byte packets
 			int count;
-			int counter = 0;
 			byte[] buffer = new byte[BUFFER_SIZE];
-			while ((count = dis.read(buffer)) != -1)
+			while ((count = dis.read(buffer)) > 0)
 			{
-				counter++;
-			//	byte[] realBuff = Arrays.copyOf(buffer, count);
+				byte[] realBuff = Arrays.copyOf(buffer, count);
+//				dos.write(Base64Utilities.encodedBytes(realBuff));
 				try
 				{
-					byte[] encryptedBytes = EncryptionDecryptionManager.encryptBytes(buffer);
+					byte[] encryptedBytes = EncryptionDecryptionManager.encryptBytes(realBuff);
 					dos.write(encryptedBytes);
-					
-				}
-				catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			System.out.println(counter);
 			// Sending -1 to mark as EOF
 			dos.write(-1);
 

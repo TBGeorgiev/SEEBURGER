@@ -59,9 +59,9 @@ public class EncryptionDecryptionManager
 		byte[] decrypted = decryptBytes(encrypted);
 		System.out.println(new String(decrypted));*/
 
-		File f1 = new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\1.jpg");
+		File f1 = new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\b.bin");
 		InputStream in = new FileInputStream(f1);
-		OutputStream out = new FileOutputStream(new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\11.jpg"));
+		OutputStream out = new FileOutputStream(new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\b1.bin"));
 
 		byte[] buf = new byte[1024];
 
@@ -73,15 +73,10 @@ public class EncryptionDecryptionManager
 			out.write(decTmp);
 		}
 		
-
 		/*byte[] encrypted = encryptBytes(Files.readAllBytes(f1.toPath()));
 		byte[] decrypted = decryptBytes(encrypted);
 		out.write(decrypted);*/
 		out.flush();
 		out.close();
-
-
-
 	}
-
 }
