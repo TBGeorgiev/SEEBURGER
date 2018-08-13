@@ -50,41 +50,52 @@ public class FileClient
 				fileHashString = ChecksumUtilities.getMD5(myFile);
 				dos.writeUTF(fileHashString);
 			}
-
 			// Sending file name to the server
 			dos.writeUTF(myFile.getName());
 
 			// Send file in encoded byte packets
-			int count;
-			byte[] buffer = new byte[BUFFER_SIZE];
-			boolean isOnce = false;
-			while ((count = dis.read(buffer)) > 0)
+			
+			try
 			{
-				
-				byte[] realBuff = Arrays.copyOf(buffer, count);
-//				dos.write(Base64Utilities.encodedBytes(realBuff));
-				try
-				{
-					byte[] encryptedBytes = EncryptionDecryptionManager.encryptBytes(realBuff);
-					byte[] encodedBytes = Base64Utilities.encodedBytes(encryptedBytes);
-					if (!isOnce) {
-						dos.writeInt(encodedBytes.length);						
-					}
-					isOnce = true;
-					dos.write(encodedBytes);
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
-						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				EncryptionDecryptionManager.encryptFileAndSendInChunks(dis, dos);
+			} catch (InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException
+					| NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			// Sending -1 to mark as EOF
-			dos.write(-1);
-
-			dos.flush();
-			fis.close();
-			bis.close();
+			
+			
+//			int count;
+//			byte[] buffer = new byte[BUFFER_SIZE];
+//			boolean isOnce = false;
+//			while ((count = dis.read(buffer)) > 0)
+//			{
+//				
+//				byte[] realBuff = Arrays.copyOf(buffer, count);
+////				dos.write(Base64Utilities.encodedBytes(realBuff));
+//				try
+//				{
+//					byte[] encryptedBytes = EncryptionDecryptionManager.encryptBytes(realBuff);
+////					byte[] encodedBytes = Base64Utilities.encodedBytes(encryptedBytes);
+//					if (!isOnce) {
+//						dos.writeInt(encryptedBytes.length);						
+//					}
+//					isOnce = true;
+//					dos.write(encryptedBytes);
+//				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+//						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			// Sending -1 to mark as EOF
+//			dos.write(-1);
+//
+//			dos.flush();
+//			fis.close();
+//			bis.close();
 
 			if (choice.equalsIgnoreCase("y"))
 			{

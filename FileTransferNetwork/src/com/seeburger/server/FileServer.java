@@ -15,7 +15,7 @@ import java.io.*;
 
 public class FileServer
 {
-	private int BUFFER_SIZE = 1060;
+	private int BUFFER_SIZE = 1387;
 	private Socket clientSocket;
 	private String hashStringBefore;
 	private String choice;
@@ -45,41 +45,52 @@ public class FileServer
 			}
 			String fileName = clientData.readUTF();
 			OutputStream output = new FileOutputStream(fileName);
-			BUFFER_SIZE = clientData.readInt();
-			System.out.println(BUFFER_SIZE);
-			byte[] buffer = new byte[BUFFER_SIZE];
-			System.out.println(buffer.length);
-
-
-			boolean end = false;
-			while ((bytesRead = clientData.read(buffer)) != -1)
+			
+			try
 			{
-				byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
-				if (realBuff[realBuff.length - 1] == -1)
-				{
-					realBuff = Arrays.copyOf(buffer, bytesRead - 1);
-					end = true;
-				}
-				try
-				{
-					byte[] decodedEncryptedBytes = Base64Utilities.decodedBytes(realBuff);
-					byte[] decryptedBytes = EncryptionDecryptionManager.decryptBytes(decodedEncryptedBytes);
-					output.write(decryptedBytes);
-				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
-						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-//				output.write(Base64Utilities.decodedBytes(realBuff));
-				output.flush();
-				if (end)
-				{
-					break;
-				}
+				EncryptionDecryptionManager.decryptFileAndWriteInChunks(clientData, output);
+			} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+					| InvalidAlgorithmParameterException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			// Closing the FileOutputStream handle
-			output.close();
+			
+//			BUFFER_SIZE = clientData.readInt();
+//			System.out.println(BUFFER_SIZE);
+//			byte[] buffer = new byte[BUFFER_SIZE];
+//			System.out.println(buffer.length);
+//
+//
+//			boolean end = false;
+//			while ((bytesRead = clientData.read(buffer)) != -1)
+//			{
+//				byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
+//				if (realBuff[realBuff.length - 1] == -1)
+//				{
+//					realBuff = Arrays.copyOf(buffer, bytesRead - 1);
+//					end = true;
+//				}
+//				try
+//				{
+////					byte[] decodedEncryptedBytes = Base64Utilities.decodedBytes(realBuff);
+//					byte[] decryptedBytes = EncryptionDecryptionManager.decryptBytes(realBuff);
+//					output.write(decryptedBytes);
+//				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+//						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+////				output.write(Base64Utilities.decodedBytes(realBuff));
+//				output.flush();
+//				if (end)
+//				{
+//					break;
+//				}
+//			}
+//			// Closing the FileOutputStream handle
+//			output.close();
 
 			System.out.println("File " + fileName + " uploaded successfully from: " + clientSocket);
 			Logging.logger.info("File " + fileName + " uploaded successfully from: " + clientSocket);

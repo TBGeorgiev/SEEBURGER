@@ -1,5 +1,7 @@
 package com.seeburger.utilities;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,10 +14,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
@@ -23,45 +28,107 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptionDecryptionManager
 {
-	private static byte[] key = { 0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65,
-            0x79 };
-	private static byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	private static byte[] key =
+	{ 0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79 };
+	private static byte[] iv =
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	private static final String CIPHER_MODE = "AES/CBC/PKCS5Padding";
 	private static final String ENCRYPTION_ALGO = "AES";
 
 
-	public static byte[] encryptBytes(byte[] bytesToEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException
+
+
+	public static void encryptFileAndSendInChunks(DataInputStream inputStream, DataOutputStream outputStream) throws IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
 		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-		byte[] toReturn = cipher.doFinal((bytesToEncrypt));;
-		return toReturn;
+
+		CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher);
+
+		byte[] ibuf = new byte[1024];
+		int len;
+		while ((len = inputStream.read(ibuf)) != -1)
+		{
+			cipherOutputStream.write(ibuf);
+			cipherOutputStream.flush();
+			
+		}
+		System.out.println("After client while");
+//		cipherOutputStream.write(-1);
+		cipherOutputStream.flush();
+	}
+	{
 	}
 
-	public static byte[] decryptBytes(byte[] bytesToEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException
-	{
-		//"AES/ECB/PKCS5PADDING"
+	public static void decryptFileAndWriteInChunks(DataInputStream inputStream, OutputStream outputStream) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IOException {
+
 		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
 		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
-	    IvParameterSpec ivspec = new IvParameterSpec(iv);
+		IvParameterSpec ivspec = new IvParameterSpec(iv);
 		cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
-		byte[] toReturn = cipher.doFinal((bytesToEncrypt));
-		return toReturn;
+		CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
+
+
+		byte[] buffer = new byte[1024];
+		boolean end = false;
+		int bytesRead;
+		System.out.println("Before while in server");
+		while ((bytesRead = cipherInputStream.read(buffer)) != -1)
+		{
+			byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
+			System.out.println(realBuff[realBuff.length - 1]);
+			outputStream.flush();
+//			if (realBuff[realBuff.length - 1] == -1)
+//			{
+//				realBuff = Arrays.copyOf(buffer, bytesRead - 1);
+//				end = true;
+//			}
+			outputStream.write(realBuff);
+//			if (end)
+//			{
+//				break;
+//			}
+		}
+		System.out.println("After while in server");
+
 	}
 
-
-
-
-	public static void main(String[] args)
-			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException
+	public static byte[] encryptBytes(byte[] bytesToEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException,
+			InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException
 	{
-//		System.out.println(new String(key));
-		/*byte[] encrypted = encryptBytes(new String("test").getBytes());
-		System.out.println(new String(encrypted));
-		byte[] decrypted = decryptBytes(encrypted);
-		System.out.println(new String(decrypted));*/
+		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
+		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
+		IvParameterSpec ivspec = new IvParameterSpec(iv);
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
+		byte[] toReturn = cipher.doFinal((bytesToEncrypt));
+		return Base64.getEncoder().withoutPadding().encode(toReturn);
+		// return toReturn;
+	}
+
+	public static byte[] decryptBytes(byte[] bytesToEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException,
+			InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException
+	{
+		// "AES/ECB/PKCS5PADDING"
+		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
+		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
+		IvParameterSpec ivspec = new IvParameterSpec(iv);
+		cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
+		return cipher.doFinal(Base64.getDecoder().decode(bytesToEncrypt));
+//		 byte[] toReturn = cipher.doFinal((bytesToEncrypt));
+//		 return toReturn;
+	}
+
+	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+			IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException
+	{
+		// System.out.println(new String(key));
+		/*
+		 * byte[] encrypted = encryptBytes(new String("test").getBytes());
+		 * System.out.println(new String(encrypted)); byte[] decrypted =
+		 * decryptBytes(encrypted); System.out.println(new String(decrypted));
+		 */
 
 		File f1 = new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\1.jpg");
 		InputStream in = new FileInputStream(f1);
@@ -82,9 +149,10 @@ public class EncryptionDecryptionManager
 			out.write(decTmp);
 		}
 
-		/*byte[] encrypted = encryptBytes(Files.readAllBytes(f1.toPath()));
-		byte[] decrypted = decryptBytes(encrypted);
-		out.write(decrypted);*/
+		/*
+		 * byte[] encrypted = encryptBytes(Files.readAllBytes(f1.toPath())); byte[]
+		 * decrypted = decryptBytes(encrypted); out.write(decrypted);
+		 */
 		out.flush();
 		out.close();
 	}
