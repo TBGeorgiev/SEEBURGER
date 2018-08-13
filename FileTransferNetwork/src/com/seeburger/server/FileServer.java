@@ -15,7 +15,7 @@ import java.io.*;
 
 public class FileServer
 {
-	private static final int BUFFER_SIZE = 6000;
+	private int BUFFER_SIZE = 1060;
 	private Socket clientSocket;
 	private String hashStringBefore;
 	private String choice;
@@ -45,7 +45,11 @@ public class FileServer
 			}
 			String fileName = clientData.readUTF();
 			OutputStream output = new FileOutputStream(fileName);
+			BUFFER_SIZE = clientData.readInt();
+			System.out.println(BUFFER_SIZE);
 			byte[] buffer = new byte[BUFFER_SIZE];
+			System.out.println(buffer.length);
+
 
 			boolean end = false;
 			while ((bytesRead = clientData.read(buffer)) != -1)
@@ -58,7 +62,8 @@ public class FileServer
 				}
 				try
 				{
-					byte[] decryptedBytes = EncryptionDecryptionManager.decryptBytes(realBuff);
+					byte[] decodedEncryptedBytes = Base64Utilities.decodedBytes(realBuff);
+					byte[] decryptedBytes = EncryptionDecryptionManager.decryptBytes(decodedEncryptedBytes);
 					output.write(decryptedBytes);
 				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)

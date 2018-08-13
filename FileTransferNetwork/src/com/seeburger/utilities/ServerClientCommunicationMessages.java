@@ -27,4 +27,5 @@ public class ServerClientCommunicationMessages
 	public static final int STATUS_HANDSHAKE_SUCCESS = 200;
 	public static final int STATUS_HANDSHAKE_FAILED = 403;
 
+	public static final int FILE_SENT = 9999;
 }
