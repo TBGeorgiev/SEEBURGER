@@ -41,6 +41,7 @@ public class FileClient
 			System.out.println("Enter the file's absolute path: ");
 			String filePath = scanner.nextLine();
 			File myFile = new File(filePath);
+//			System.out.println("File size: " + myFile.length());
 			FileInputStream fis = new FileInputStream(myFile);
 			BufferedInputStream bis = new BufferedInputStream(fis);
 			DataInputStream dis = new DataInputStream(bis);
@@ -52,37 +53,40 @@ public class FileClient
 			}
 			// Sending file name to the server
 			dos.writeUTF(myFile.getName());
-
+			dos.flush();
 			// Send file in encoded byte packets
-			
+
 			try
 			{
 				EncryptionDecryptionManager.encryptFileAndSendInChunks(dis, dos);
+
 			} catch (InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException
 					| NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+//
+
 //			int count;
 //			byte[] buffer = new byte[BUFFER_SIZE];
 //			boolean isOnce = false;
 //			while ((count = dis.read(buffer)) > 0)
 //			{
-//				
+//
 //				byte[] realBuff = Arrays.copyOf(buffer, count);
 ////				dos.write(Base64Utilities.encodedBytes(realBuff));
 //				try
 //				{
 //					byte[] encryptedBytes = EncryptionDecryptionManager.encryptBytes(realBuff);
+//					System.out.println(encryptedBytes[0]);
 ////					byte[] encodedBytes = Base64Utilities.encodedBytes(encryptedBytes);
 //					if (!isOnce) {
-//						dos.writeInt(encryptedBytes.length);						
+//						dos.writeInt(encryptedBytes.length);
 //					}
 //					isOnce = true;
 //					dos.write(encryptedBytes);
+//					dos.flush();
 //				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 //						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
 //				{
@@ -93,12 +97,15 @@ public class FileClient
 //			// Sending -1 to mark as EOF
 //			dos.write(-1);
 //
-//			dos.flush();
-//			fis.close();
-//			bis.close();
+			dos.flush();
+			fis.close();
+			bis.close();
 
 			if (choice.equalsIgnoreCase("y"))
 			{
+				if (sock.isClosed()) {
+					sock = new Socket("localhost", 21000);
+				}
 				DataInputStream dataInputStream = new DataInputStream(sock.getInputStream());
 				String hashAnswer = dataInputStream.readUTF();
 				System.out.println(hashAnswer);

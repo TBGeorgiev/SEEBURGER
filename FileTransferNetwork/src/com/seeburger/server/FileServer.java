@@ -17,12 +17,14 @@ public class FileServer
 {
 	private int BUFFER_SIZE = 1387;
 	private Socket clientSocket;
+	private ServerSocket serverSocket;
 	private String hashStringBefore;
 	private String choice;
 
-	public FileServer(Socket clientSocket)
+	public FileServer(Socket clientSocket, ServerSocket serverSocket)
 	{
 		this.clientSocket = clientSocket;
+		this.serverSocket = serverSocket;
 	}
 
 	public void startFileServer() throws IOException
@@ -45,7 +47,7 @@ public class FileServer
 			}
 			String fileName = clientData.readUTF();
 			OutputStream output = new FileOutputStream(fileName);
-			
+
 			try
 			{
 				EncryptionDecryptionManager.decryptFileAndWriteInChunks(clientData, output);
@@ -55,7 +57,7 @@ public class FileServer
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 //			BUFFER_SIZE = clientData.readInt();
 //			System.out.println(BUFFER_SIZE);
 //			byte[] buffer = new byte[BUFFER_SIZE];
@@ -63,9 +65,11 @@ public class FileServer
 //
 //
 //			boolean end = false;
-//			while ((bytesRead = clientData.read(buffer)) != -1)
+//
+//			while ((bytesRead = clientData.read(buffer)) > 0)
 //			{
 //				byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
+//				System.out.println(realBuff[0]);
 //				if (realBuff[realBuff.length - 1] == -1)
 //				{
 //					realBuff = Arrays.copyOf(buffer, bytesRead - 1);
@@ -75,6 +79,7 @@ public class FileServer
 //				{
 ////					byte[] decodedEncryptedBytes = Base64Utilities.decodedBytes(realBuff);
 //					byte[] decryptedBytes = EncryptionDecryptionManager.decryptBytes(realBuff);
+//
 //					output.write(decryptedBytes);
 //				} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
 //						| IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e)
@@ -90,7 +95,8 @@ public class FileServer
 //				}
 //			}
 //			// Closing the FileOutputStream handle
-//			output.close();
+			output.close();
+
 
 			System.out.println("File " + fileName + " uploaded successfully from: " + clientSocket);
 			Logging.logger.info("File " + fileName + " uploaded successfully from: " + clientSocket);
@@ -98,6 +104,9 @@ public class FileServer
 			if (choice.equalsIgnoreCase("y"))
 			{
 				Logging.logger.info("File hash tests on file " + fileName);
+//				if (clientSocket.isClosed()) {
+//					clientSocket = serverSocket.accept();
+//				}
 				DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
 				String newHashString = ChecksumUtilities.getMD5(new File(fileName));
 				if (newHashString.compareTo(hashStringBefore) == 0)

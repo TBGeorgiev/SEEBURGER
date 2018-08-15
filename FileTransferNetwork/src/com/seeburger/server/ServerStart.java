@@ -114,7 +114,7 @@ public class ServerStart
 						} else if (choice == 2)
 						{
 							dataOutputStream.writeUTF("exit_listener");
-							FileReceiverThread fileReceiverThread = new FileReceiverThread(socket);
+							FileReceiverThread fileReceiverThread = new FileReceiverThread(socket, serverSocket);
 							executorService.execute(fileReceiverThread);
 						}
 					} else

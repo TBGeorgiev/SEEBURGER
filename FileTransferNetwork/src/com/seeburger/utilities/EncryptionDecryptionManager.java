@@ -32,8 +32,13 @@ public class EncryptionDecryptionManager
 	{ 0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79 };
 	private static byte[] iv =
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	private static final String CIPHER_MODE = "AES/CBC/PKCS5Padding";
+	private static final String CIPHER_MODE = "AES/CFB8/NoPadding";
+	//AES/CFB8/NoPadding - keeps original file size after decryption
+	//AES/CBC/PKCS5Padding - gives extra bytes to file after decryption
+
 	private static final String ENCRYPTION_ALGO = "AES";
+
+	private static int BUFFER_SIZE = 1024;
 
 
 
@@ -47,17 +52,20 @@ public class EncryptionDecryptionManager
 
 		CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher);
 
-		byte[] ibuf = new byte[1024];
+		byte[] ibuf = new byte[BUFFER_SIZE];
 		int len;
-		while ((len = inputStream.read(ibuf)) != -1)
+		while ((len = inputStream.read(ibuf)) >= 0)
 		{
-			cipherOutputStream.write(ibuf);
+			System.out.println(len);
 			cipherOutputStream.flush();
-			
+			cipherOutputStream.write(ibuf, 0, len);
+
 		}
 		System.out.println("After client while");
 //		cipherOutputStream.write(-1);
 		cipherOutputStream.flush();
+//		cipherOutputStream.close();
+//		outputStream.close();
 	}
 	{
 	}
@@ -71,27 +79,34 @@ public class EncryptionDecryptionManager
 		CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
 
 
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[BUFFER_SIZE];
 		boolean end = false;
 		int bytesRead;
 		System.out.println("Before while in server");
-		while ((bytesRead = cipherInputStream.read(buffer)) != -1)
+		while ((bytesRead = cipherInputStream.read(buffer)) >= 0)
 		{
+//			BUFFER_SIZE = inputStream.readInt();
 			byte[] realBuff = Arrays.copyOf(buffer, bytesRead);
-			System.out.println(realBuff[realBuff.length - 1]);
-			outputStream.flush();
+//			System.out.println(realBuff[realBuff.length - 1]);
 //			if (realBuff[realBuff.length - 1] == -1)
 //			{
 //				realBuff = Arrays.copyOf(buffer, bytesRead - 1);
 //				end = true;
 //			}
-			outputStream.write(realBuff);
+			System.out.println(bytesRead);
+			outputStream.write(realBuff, 0, bytesRead);
+			outputStream.flush();
+
 //			if (end)
 //			{
 //				break;
 //			}
 		}
+		cipherInputStream.close();
+		inputStream.close();
+		outputStream.close();
 		System.out.println("After while in server");
+
 
 	}
 
@@ -103,8 +118,9 @@ public class EncryptionDecryptionManager
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
 		byte[] toReturn = cipher.doFinal((bytesToEncrypt));
-		return Base64.getEncoder().withoutPadding().encode(toReturn);
-		// return toReturn;
+		byte[] encoded = Base64.getEncoder().encode(toReturn);
+		return encoded;
+//		 return toReturn;
 	}
 
 	public static byte[] decryptBytes(byte[] bytesToEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException,
@@ -115,8 +131,10 @@ public class EncryptionDecryptionManager
 		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
 		IvParameterSpec ivspec = new IvParameterSpec(iv);
 		cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
-		return cipher.doFinal(Base64.getDecoder().decode(bytesToEncrypt));
-//		 byte[] toReturn = cipher.doFinal((bytesToEncrypt));
+
+		byte[] decoded = Base64.getDecoder().decode(bytesToEncrypt);
+		byte[] decrypted = cipher.doFinal(decoded);
+		return decrypted;
 //		 return toReturn;
 	}
 
