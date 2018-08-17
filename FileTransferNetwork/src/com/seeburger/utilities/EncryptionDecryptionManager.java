@@ -28,17 +28,21 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptionDecryptionManager
 {
-	private static byte[] key =
-	{ 0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79 };
-	private static byte[] iv =
+//	private static byte[] key =
+//	{ 0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79 };
+	private static final byte[] key = ServerClientCommunicationMessages.MASTER_PASSWORD.getBytes();
+	private static final byte[] iv =
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	private static final String CIPHER_MODE = "AES/CFB8/NoPadding";
 	//AES/CFB8/NoPadding - keeps original file size after decryption
 	//AES/CBC/PKCS5Padding - gives extra bytes to file after decryption
-
+	
 	private static final String ENCRYPTION_ALGO = "AES";
+	private static final int BUFFER_SIZE = 1024;
 
-	private static int BUFFER_SIZE = 1024;
+	private static final SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
+	private static final IvParameterSpec ivspec = new IvParameterSpec(iv);
+
 
 
 
@@ -46,17 +50,14 @@ public class EncryptionDecryptionManager
 	public static void encryptFileAndSendInChunks(DataInputStream inputStream, DataOutputStream outputStream) throws IOException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException
 	{
 		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
-		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
-		IvParameterSpec ivspec = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-
 		CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, cipher);
 
 		byte[] ibuf = new byte[BUFFER_SIZE];
 		int len;
 		while ((len = inputStream.read(ibuf)) >= 0)
 		{
-			System.out.println(len);
+//			System.out.println(len);
 			cipherOutputStream.flush();
 			cipherOutputStream.write(ibuf, 0, len);
 
@@ -64,7 +65,7 @@ public class EncryptionDecryptionManager
 		System.out.println("After client while");
 //		cipherOutputStream.write(-1);
 		cipherOutputStream.flush();
-//		cipherOutputStream.close();
+		cipherOutputStream.close();
 //		outputStream.close();
 	}
 	{
@@ -73,8 +74,6 @@ public class EncryptionDecryptionManager
 	public static void decryptFileAndWriteInChunks(DataInputStream inputStream, OutputStream outputStream) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IOException {
 
 		Cipher cipher = Cipher.getInstance(CIPHER_MODE);
-		SecretKeySpec secretKey = new SecretKeySpec(key, ENCRYPTION_ALGO);
-		IvParameterSpec ivspec = new IvParameterSpec(iv);
 		cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
 		CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
 
@@ -93,7 +92,7 @@ public class EncryptionDecryptionManager
 //				realBuff = Arrays.copyOf(buffer, bytesRead - 1);
 //				end = true;
 //			}
-			System.out.println(bytesRead);
+//			System.out.println(bytesRead);
 			outputStream.write(realBuff, 0, bytesRead);
 			outputStream.flush();
 
@@ -173,5 +172,13 @@ public class EncryptionDecryptionManager
 		 */
 		out.flush();
 		out.close();
+	}
+	
+	public static void generateSecretKey(String salt, int iterationsCount) {
+		
+	}
+	
+	public static String getAlgoName() {
+		return ENCRYPTION_ALGO;
 	}
 }

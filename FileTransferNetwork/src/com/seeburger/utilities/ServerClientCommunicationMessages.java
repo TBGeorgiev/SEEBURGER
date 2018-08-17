@@ -2,7 +2,8 @@ package com.seeburger.utilities;
 
 public class ServerClientCommunicationMessages
 {
-	public static final String MASTER_PASSWORD = "12345";
+	public static final String MASTER_PASSWORD = "ThisIsASecretPassword123";
+//	public static final String MASTER_PASSWORD = "%f1^!pZ&_n+(21['|1-@7dfr";
 
 	public static final int HELLO = 111;
 

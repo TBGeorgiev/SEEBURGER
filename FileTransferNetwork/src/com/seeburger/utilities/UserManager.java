@@ -61,6 +61,22 @@ public class UserManager
 		}
 		return false;
 	}
+	
+	public static boolean serverLoginOrRegisterStart(DataInputStream inputStream, DataOutputStream outputStream) {
+		if (Authentication.getLogin()) {
+			return serverLogin(inputStream, outputStream);
+		} else {
+			return serverRegister(inputStream, outputStream);
+		}
+	}
+	
+	public static boolean userLoginOrRegisterStart(DataInputStream inputStream, DataOutputStream outputStream, BufferedReader reader) {
+		if (Authentication.getLogin()) {
+			return userLogin(inputStream, outputStream, reader);
+		} else {
+			return userRegister(inputStream, outputStream, reader);
+		}
+	}
 
 	public static boolean serverRegister(DataInputStream inputStream, DataOutputStream outputStream)
 	{
@@ -110,9 +126,13 @@ public class UserManager
 				String password = reader.readLine();
 				password = HashingManager.generateHashedPass(password);
 				outputStream.writeUTF(password);
-				if (inputStream.readInt() == ServerClientCommunicationMessages.LOGIN_SUCCESS) {
+				int loginResponse = inputStream.readInt();
+				if (loginResponse == ServerClientCommunicationMessages.LOGIN_SUCCESS) {
 					System.out.println("User logged in.");
 					return true;
+				}
+				else if (loginResponse == ServerClientCommunicationMessages.LOGIN_FAILED) {
+					System.out.println("Login failed. User does not exist.");				
 				}
 			}		
 		} catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e)
@@ -120,7 +140,6 @@ public class UserManager
 			Logging.logger.log(Level.WARNING, e.getMessage());
 			e.printStackTrace();
 		}
-		System.out.println("Login failed. User does not exist.");
 		return false;
 		
 	}
@@ -137,6 +156,7 @@ public class UserManager
 					outputStream.writeInt(ServerClientCommunicationMessages.LOGIN_SUCCESS);
 					return true;
 				}
+				System.out.println("Sending login failed response to client");
 				outputStream.writeInt(ServerClientCommunicationMessages.LOGIN_FAILED);
 			}
 		} catch (IOException e)

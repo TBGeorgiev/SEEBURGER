@@ -7,6 +7,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -31,8 +33,10 @@ public class FileClient
 	{
 		System.out.println("Do you want to enable File Consistency Checks (MD5 Checksum)?\nY / N:");
 		choice = scanner.nextLine();
+		
+		Socket socket2 = new Socket("localhost", 22000);
 
-		OutputStream os = sock.getOutputStream();
+		OutputStream os = socket2.getOutputStream();
 		DataOutputStream dos = new DataOutputStream(os);
 		dos.writeUTF(choice);
 
@@ -53,9 +57,11 @@ public class FileClient
 			}
 			// Sending file name to the server
 			dos.writeUTF(myFile.getName());
+//			dos.writeUTF("@HEADER@ENCRYPTION@" + EncryptionDecryptionManager.getAlgoName() + "@" + HashingManager.generateRandomNumberOfIterations(1024) + "@" + HashingManager.generateRandomSalt(4));
 			dos.flush();
 			// Send file in encoded byte packets
-
+			
+			
 			try
 			{
 				EncryptionDecryptionManager.encryptFileAndSendInChunks(dis, dos);
@@ -64,6 +70,7 @@ public class FileClient
 					| NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e)
 			{
 				// TODO Auto-generated catch block
+				Logging.logger.log(Level.WARNING, e.getMessage());
 				e.printStackTrace();
 			}
 //
@@ -101,17 +108,21 @@ public class FileClient
 			fis.close();
 			bis.close();
 
+//			if (sock.isClosed()) {
+//				sock = new Socket("localhost", 21000);
+//				dos = new DataOutputStream(sock.getOutputStream());
+//			}
 			if (choice.equalsIgnoreCase("y"))
 			{
-				if (sock.isClosed()) {
-					sock = new Socket("localhost", 21000);
-				}
 				DataInputStream dataInputStream = new DataInputStream(sock.getInputStream());
 				String hashAnswer = dataInputStream.readUTF();
 				System.out.println(hashAnswer);
 			}
 			System.out.println("Do you want to send more files?\ny / n:");
 			String answer = scanner.nextLine();
+//			if(sock.isClosed()) {
+//				sock = new Socket("localhost", 21000);
+//			}
 			if (answer.equalsIgnoreCase("n"))
 			{
 				dos.writeUTF(answer);

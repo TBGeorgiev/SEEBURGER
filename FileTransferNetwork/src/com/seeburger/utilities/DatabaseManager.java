@@ -98,7 +98,6 @@ public class DatabaseManager
 	public static boolean attemptLoginOnUser(String username, String password)
 	{
 		ResultSet rs1 = null;
-		;
 		String queryForUsernameAndPass = "SELECT * FROM users WHERE username = ? AND pass = ?";
 
 		try

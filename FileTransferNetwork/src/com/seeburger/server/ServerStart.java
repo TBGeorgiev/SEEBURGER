@@ -18,6 +18,7 @@ import java.util.logging.SimpleFormatter;
 
 import com.seeburger.utilities.Authentication;
 import com.seeburger.utilities.Logging;
+import com.seeburger.utilities.UserManager;
 
 public class ServerStart
 {
@@ -81,6 +82,10 @@ public class ServerStart
 
 					if (Authentication.serverSideAuthentication(dataInputStream, dataOutputStream))
 					{
+						
+						while (!UserManager.serverLoginOrRegisterStart(dataInputStream, dataOutputStream)) {
+							
+						}
 						dataOutputStream.writeUTF(printWelcomeMenu());
 						int choice = Integer.parseInt(dataInputStream.readUTF());
 

@@ -1,6 +1,7 @@
 package com.seeburger.client;
 
 import java.io.BufferedReader;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.logging.SimpleFormatter;
 
 import com.seeburger.utilities.Authentication;
 import com.seeburger.utilities.Logging;
+import com.seeburger.utilities.UserManager;
 
 public class ClientStart
 {
@@ -61,6 +63,9 @@ public class ClientStart
 
 			if (Authentication.clientSideAuthentication(dataInputStream, dataOutputStream))
 			{
+				while (!UserManager.userLoginOrRegisterStart(dataInputStream, dataOutputStream, reader)) {
+
+				}
 				ListenerThread listenerRunnable = new ListenerThread(dataInputStream);
 				Thread listenerThread = new Thread(listenerRunnable);
 				CommandsThread commandsRunnable = new CommandsThread(dataOutputStream, socket);

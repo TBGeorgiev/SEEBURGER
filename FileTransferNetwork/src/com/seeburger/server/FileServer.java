@@ -29,7 +29,9 @@ public class FileServer
 
 	public void startFileServer() throws IOException
 	{
-		InputStream in = clientSocket.getInputStream();
+		ServerSocket serverSocket2 = new ServerSocket(22000);
+		Socket fileSocket = serverSocket2.accept();
+		InputStream in = fileSocket.getInputStream();
 		DataInputStream clientData = new DataInputStream(in);
 
 		choice = clientData.readUTF();
@@ -37,7 +39,7 @@ public class FileServer
 
 		while (true)
 		{
-			if (clientSocket.isClosed())
+			if (fileSocket.isClosed())
 			{
 				break;
 			}

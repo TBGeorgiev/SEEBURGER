@@ -16,7 +16,7 @@ public class HashingManager
 	{
 		byte[] saltedBytes = salt.getBytes();
 		KeySpec spec = new PBEKeySpec(ServerClientCommunicationMessages.MASTER_PASSWORD.toCharArray(), saltedBytes,
-				iterations, 128);
+				iterations, 256);
 		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 		byte[] hash = f.generateSecret(spec).getEncoded();
 		System.out.println("Master pass: " + ServerClientCommunicationMessages.MASTER_PASSWORD);
@@ -49,9 +49,9 @@ public class HashingManager
 		KeySpec spec = new PBEKeySpec(userPass.toCharArray(), saltedBytes, iterations, 128);
 		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 		byte[] hash = f.generateSecret(spec).getEncoded();
-//		System.out.println("User pass: " + userPass);
-//		System.out.println("Salt: " + salt);
-//		System.out.println("Hashed pass: " + new String(hash));
+		System.out.println("User pass: " + userPass);
+		System.out.println("Salt: " + salt);
+		System.out.println("Hashed pass: " + new String(hash));
 		return new String(salt + ">" + iterations + ">" + new String(hash));
 	}
 

@@ -45,21 +45,23 @@ public class Authentication
 				String saltAndIterations = dataInputStream.readUTF();
 				String saltedMasterPassword = generateHash(saltAndIterations);
 				dataOutputStream.writeUTF(saltedMasterPassword);
+				System.out.println("Client: " + saltedMasterPassword);
 				int responseToSaltFromServer = dataInputStream.readInt();
 				switch (responseToSaltFromServer)
 				{
 				case ServerClientCommunicationMessages.STATUS_HANDSHAKE_SUCCESS:
 					System.out.println("HANDSHAKE SUCCESS");
-					if (!login)
-					{
-						// TODO login
-						return UserManager.userRegister(dataInputStream, dataOutputStream, reader);
-					} else
-					{
-						return UserManager.userLogin(dataInputStream, dataOutputStream, reader);
-						// TODO register
-					}
-					// return true;
+					return true;
+//					if (!login)
+//					{
+//						// TODO login
+//						return UserManager.userRegister(dataInputStream, dataOutputStream, reader);
+//					} else
+//					{
+//						return UserManager.userLogin(dataInputStream, dataOutputStream, reader);
+//						// TODO register
+//					}
+//					// return true;
 
 				case ServerClientCommunicationMessages.STATUS_HANDSHAKE_FAILED:
 					Logging.logger.log(Level.SEVERE, "HANDSHAKE FAILED");
@@ -90,14 +92,17 @@ public class Authentication
 				handshake = checkMasterPasswordHash(dataInputStream, dataOutputStream);
 				if (handshake)
 				{
-					return UserManager.serverRegister(dataInputStream, dataOutputStream);
+					return true;
+//					return UserManager.serverRegister(dataInputStream, dataOutputStream);
 				}
 
 			case ServerClientCommunicationMessages.LOGIN_PLAIN:
 				handshake = checkMasterPasswordHash(dataInputStream, dataOutputStream);
 				if (handshake)
 				{
-					return UserManager.serverLogin(dataInputStream, dataOutputStream);
+					login = true;
+					return true;
+//					return UserManager.serverLogin(dataInputStream, dataOutputStream);
 				}
 			}
 
@@ -122,6 +127,8 @@ public class Authentication
 		dataOutputStream.writeUTF(ServerClientCommunicationMessages.STATUS_OK_SEND_SALT_AND_ITERATIONS + "<"
 				+ randomSaltString + "><" + randomNum + ">");
 		String hashedMasterPass = dataInputStream.readUTF();
+		
+		System.out.println("Server received hashed pass: " + hashedMasterPass);
 
 		if (masterPasswordCheck(hashedMasterPass, randomSaltString, randomNum))
 		{
@@ -140,6 +147,7 @@ public class Authentication
 			throws NoSuchAlgorithmException, InvalidKeySpecException
 	{
 		String hashedString = HashingManager.generateHashedMasterPass(salt, iterations);
+		System.out.println("Server generated hashed master pass: " + hashedString);
 		if (clientHash.equals(hashedString))
 		{
 			return true;
@@ -155,5 +163,9 @@ public class Authentication
 		int iterations = Integer.parseInt(split[2].substring(0, split[2].length() - 1));
 		String saltedMasterPassword = HashingManager.generateHashedMasterPass(salt, iterations);
 		return saltedMasterPassword;
+	}
+	
+	public static boolean getLogin() {
+		return login;
 	}
 }
